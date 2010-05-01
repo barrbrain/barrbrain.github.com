@@ -1,0 +1,70 @@
+/* Base styling for a clean feel */
+
+body {
+  background-color: #cde;
+  font-family: serif;
+  text-align: justify;
+  line-height: 1.3em;
+  width: 90ex;
+  margin: 2em auto 1em auto;
+  color: #012;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-size: 100%;
+  margin-bottom: 1em;
+}
+
+p {
+  margin: 1em 0;
+}
+
+a {
+  color: #369;
+  text-decoration: none;
+}
+
+a:visited {
+  color: #234;
+}
+
+a:hover {
+  color: #567;
+}
+
+ul {
+  list-style-type: none;
+  margin-bottom: 1em;
+  padding-left: 0;
+}
+
+ul li {
+  line-height: 1.5em;
+}
+
+/* Tweaks for specific elements */
+
+ul span:after {
+  content: " » ";
+}
+
+.title {
+  font-weight: bold;
+  margin-bottom: 2em;
+}
+
+.title a {
+  color: #369;
+}
+
+.footer {
+  font-size: 80%;
+  border-top: 4px solid #abc;
+  margin-top: 1em;
+  overflow: hidden;
+}
+
+.footer .contact {
+  float: left;
+  margin-right: 2em;
+}
