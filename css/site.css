@@ -68,3 +68,11 @@ ul span:after {
   float: left;
   margin-right: 2em;
 }
+
+/* Photo gallery tweaks */
+
+.photo img {
+  display: block;
+  width: 80%;
+  margin: 1em auto 1em auto;
+}

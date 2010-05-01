@@ -1,0 +1,9 @@
+---
+layout: gallery
+title: Sample gallery
+photos: - title: Sample Image
+          file: sample.png
+          comment: This is a sample image
+---
+
+The gallery description goes here.
