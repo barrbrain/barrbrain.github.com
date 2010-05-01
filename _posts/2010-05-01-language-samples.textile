@@ -13,13 +13,14 @@ photos: - id: c
         - id: perl
           title: perl source with syntax highlighting
           file: lang/perl.png
-          comment: When the fork rate of bash gets out of control, its time
-                   to port to perl.
+          comment: When the "fork rate of bash":#bash gets out of control,
+                   its time to port to perl.
 ---
 
 h1. {{ page.title }}
 
 The primary purpose of this gallery is to test my new template. The data for the gallery is specified in the "YAML Front Matter":http://wiki.github.com/mojombo/jekyll/yaml-front-matter, while the gallery description follows in the content of the post. You can even link to photos from the summary, e.g. "my perl screenshot":#perl.
+
 The front matter for this post is as follows:
 
 pre.. ---
@@ -37,8 +38,8 @@ photos: - id: c
         - id: perl
           title: perl source with syntax highlighting
           file: lang/perl.png
-          comment: When the fork rate of bash gets out of control, its time
-                   to port to perl.
+          comment: When the "fork rate of bash":#bash gets out of control,
+                   its time to port to perl.
 ---
 
 p. As you can see, it is quite readable but also machine parsable.
