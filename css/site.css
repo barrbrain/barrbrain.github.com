@@ -42,6 +42,12 @@ ul li {
   line-height: 1.5em;
 }
 
+pre {
+  font-size: 80%;
+  padding: 1ex;
+  border: solid black 1px;
+}
+
 /* Tweaks for specific elements */
 
 ul span:after {

@@ -3,14 +3,12 @@ layout: default
 ---
 <div id="gallery">
 
-  <h1>{{ page.title }}</h1>
-
   {{ content }}
 
   {% for photo in page.photos %}
-    <div class="photo">
+    <div class="photo" id="{{ photo.id }}">
       <h3>{{ photo.title }}</h3>
-      <img alt="{{ photo.title }}" href="/img/{{ photo.file }}" />
+      <img alt="{{ photo.title }}" src="/img/{{ photo.file }}" />
       {{ photo.comment }}
     </div>
   {% endfor %}
