@@ -8,9 +8,9 @@ layout: default
   {% for video in page.videos %}
     <div class="video" id="{{ video.id }}">
       <h3>{{ video.title }}</h3>
-      <video alt="{{ video.title }}" src="/vid/{{ video.file }}" controls="controls">
-        your browser does not support the video tag
-      </video>
+      <applet code="com.fluendo.player.Cortado.class" archive="http://theora.org/cortado.jar" width="640" height="480">
+        <param name="url" value="/vid/{{ video.file }}"/>
+      </applet>
       {{ video.comment | textilize }}
     </div>
   {% endfor %}
