@@ -2,8 +2,10 @@
 layout: video
 title: Self introduction
 videos: - id: selfintro
-          title: barrbrain intrdouces himself
+          title: barrbrain introduces himself
           file: selfintro.ogg
+          width: 320
+          height: 240
           comment: This short video gives a brief introduction of me
                    and my passion. See my earlier post for more detail.
 ---
