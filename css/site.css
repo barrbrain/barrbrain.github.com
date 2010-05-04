@@ -5,8 +5,9 @@ body {
   font-family: serif;
   text-align: justify;
   line-height: 1.3em;
-  width: 90ex;
-  margin: 2em auto 1em auto;
+  max-width: 90ex;
+  padding: 1em;
+  margin: 1em auto 0 auto;
   color: #012;
 }
 
