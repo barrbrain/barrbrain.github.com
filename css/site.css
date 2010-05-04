@@ -47,6 +47,7 @@ pre {
   font-size: 80%;
   padding: 1ex;
   border: solid black 1px;
+  overflow: hidden;
 }
 
 /* Tweaks for specific elements */
