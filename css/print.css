@@ -1,0 +1,17 @@
+body {
+  font-family: serif ;
+}
+div {
+  max-width: 80ex ;
+}
+p {
+  text-indent: 1em ;
+  text-align: justify ; 
+  margin-bottom: 0px ;
+  margin-top: 0px ;
+}
+.footer {
+  border-top: 1pt solid #000;
+  margin-top: 1em;
+  overflow: hidden;
+}
