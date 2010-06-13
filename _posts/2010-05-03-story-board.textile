@@ -8,10 +8,6 @@ photos: - id: story
                    short self-introduction video linked in the previous post.
 ---
 
-h1. {{ page.title }}
-
-p(meta). 3 May, 2010 - Canberra
-
 As video can be quite bandwidth intensive, the primary purpose of the video I've created is to let readers of my blog know how I look and sound.
 
 I was surprised just how hard it is to monologue for the camera. Its been quite a few years since I've done any acting. However, I think performing for a live audience provides sufficient pressure to not stop at mistakes but improvise to cover them. Performing alone for the camera resulted in me halting every time I messed up a line, even if it was just the pace.

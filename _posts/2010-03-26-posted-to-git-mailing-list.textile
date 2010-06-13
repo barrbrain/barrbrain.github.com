@@ -3,10 +3,6 @@ layout: post
 title: Posted to git mailing list
 ---
 
-h1. {{ page.title }}
-
-p(meta). 26 Mar 2010 - Canberra
-
 I posted the following email to the git mailing list to see what people closer to git think about my project concept:
 
 Hi folks,

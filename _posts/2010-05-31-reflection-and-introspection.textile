@@ -3,10 +3,6 @@ layout: post
 title: Reflection and introspection
 ---
 
-h1. {{ page.title }}
-
-p(meta). 31 May, 2010 - Canberra
-
 It has been quite interesting trying to build a website that is minimalist yet informative and make use of a variety of media. Unfortunately, video is still a minefield on the web and even when a formal agreement is reached for HTML 5, it will still be some time before a dominant standard for web video emerges. I hope that a royalty-free video standard with an open-source reference implementation is victorious. It would terrible to see the legal wranglings that occurred with JPEG, GIF and MP3 happen again with video.
 
 I could have saved a lot of time if I'd read the documentation for the publishing tool I chose before creating my site structure. It is quite useful to be able to separate content from structure, so I consider it a worthwhile cost.

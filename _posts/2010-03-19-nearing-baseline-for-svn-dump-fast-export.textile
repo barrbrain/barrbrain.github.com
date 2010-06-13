@@ -3,10 +3,6 @@ layout: post
 title: Nearing baseline for svn-dump-fast-export
 ---
 
-h1. {{ page.title }}
-
-p(meta). 19 Mar 2010 - Canberra
-
 I've been rapidly coding away again and now svn-dump-fast-export is close to baseline.
 I finished porting a basic frontend that reads the tree data but skips props.
 The subversion add, delete, and change actions have been mapped to my repository tree library.

@@ -3,10 +3,6 @@ layout: post
 title: Repository tree library mostly complete
 ---
 
-h1. {{ page.title }}
-
-p(meta). 17 Mar 2010 - Canberra
-
 I've started work on the repository tree representation library for svn-dump-fast-export.
 In the wee hours of this morning, I completed the tree mutation methods, I think.
 From visual inspection of tree dumps between revisions, the behaviour seems correct.

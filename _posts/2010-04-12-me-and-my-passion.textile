@@ -3,10 +3,6 @@ layout: post
 title: Me and my passion
 ---
 
-h1. {{ page.title }}
-
-p(meta). 12 Apr 2010 - Canberra
-
 I am David M. Barr, also known by the pseudonym barrbrain. My pseudonym dates back to primary school and was a reference to fictional character I played for Tournament of Minds. As I used it as my handle for my first open-source contributions and it is unique, I've decided to own it proudly.
 My passion has always been to create. When I was a wee lad, I wanted to be an architect - I knew that they were clever and designed grand things. When I was eight years old, I discovered electronics and set my sights on becoming an electronic engineer. Along the way I discovered that I didn't have the dexterity for solder work, nor the money for a PCB printer but that I could programme a computer to do all sorts of amazing things. This has been my passion ever since.
 
