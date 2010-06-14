@@ -5,10 +5,10 @@ layout: nil
 <feed xmlns="http://www.w3.org/2005/Atom">
  
  <title>David Barr</title>
- <link href="http://barrbrain.github.com/atom.xml" rel="self"/>
- <link href="http://barrbrain.github.com/"/>
+ <link href="http://barrbrain.users.sourceforge.net/atom.xml" rel="self"/>
+ <link href="http://barrbrain.users.sourceforge.net/"/>
  <updated>{{ site.time | date_to_xmlschema }}</updated>
- <id>http://barrbrain.github.com/</id>
+ <id>http://barrbrain.users.sourceforge.net/</id>
  <author>
    <name>David Barr</name>
    <email>david.barr@cordelta.com</email>
@@ -17,9 +17,9 @@ layout: nil
  {% for post in site.posts %}
  <entry>
    <title>{{ post.title }}</title>
-   <link href="http://barrbrain.github.com{{ post.url }}"/>
+   <link href="http://barrbrain.users.sourceforge.net{{ post.url }}"/>
    <updated>{{ post.date | date_to_xmlschema }}</updated>
-   <id>http://barrbrain.github.com{{ post.id }}</id>
+   <id>http://barrbrain.users.sourceforge.net{{ post.id }}</id>
    <content type="html">{{ post.content | xml_escape }}</content>
  </entry>
  {% endfor %}

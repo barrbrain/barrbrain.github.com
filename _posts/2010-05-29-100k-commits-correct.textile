@@ -3,7 +3,7 @@ layout: post
 title: A hundred thousand commits correct
 ---
 
-Big news everybody! I've finally completed my alternate implementation of "svn-dump-fast-export":/svn-dump-fast-export/ in Perl. The key step was coming up with a simple algorithm that was of moderate time complexity and easy to prove correctness. I'll come back to that in a minute.
+Big news everybody! I've finally completed my alternate implementation of "svn-dump-fast-export":http://barrbrain.github.com/svn-dump-fast-export/ in Perl. The key step was coming up with a simple algorithm that was of moderate time complexity and easy to prove correctness. I'll come back to that in a minute.
 
 I was able to demonstrate that "the latest commit":http://github.com/barrbrain/svn-dump-fast-export/commit/c373b4b produced consistent results between the C and Perl implementations for the first hundred thousand commits of the "Apache Software Foundation repository":http://svn.apache.org/repos/asf.
 I am presently attempting to verify an import of the first 940,166 commits of the same repository, from a dump dated 02-May-2010 15:14. The Perl implementation has comparable memory footprint to the C implementation but a much larger I/O footprint. As such, it may take as long as a week to complete although the C implementation completed in just two hours.
