@@ -33,6 +33,10 @@ a:hover {
   color: #567;
 }
 
+a > img {
+  border: none;
+}
+
 ul {
   list-style-type: none;
   margin-bottom: 1em;
