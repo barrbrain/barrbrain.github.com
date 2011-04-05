@@ -18,28 +18,18 @@
          until: new Date(2011, 4, 9, 8, 30, 0),
          timezone: +10,
          format: 'DHMS',
-         layout: '<div id="t7_timer">'+
-            '<div id="t7_vals">'+
-               '<div id="t7_d" class="t7_numbs">{dnn}</div>'+
-               '<div id="t7_h" class="t7_numbs">{hnn}</div>'+
-               '<div id="t7_m" class="t7_numbs">{mnn}</div>'+
-               '<div id="t7_s" class="t7_numbs">{snn}</div>'+
-            '</div>'+
-            '<div id="t7_labels">'+
-               '<div id="t7_dl" class="t7_labs">days</div>'+
-               '<div id="t7_hl" class="t7_labs">hours</div>'+
-               '<div id="t7_ml" class="t7_labs">mins</div>'+
-               '<div id="t7_sl" class="t7_labs">secs</div>'+
-            '</div>'+
-         '</div>'
+         layout: '<span class="countdown_row">' +
+            '<span class="countdown_section"><span class="countdown_amount">{dn}</span> {dl}</span> ' +
+            '<span class="countdown_section"><span class="countdown_amount">{hn}</span> {hl}</span> ' +
+            '<span class="countdown_section"><span class="countdown_amount">{mn}</span> {ml}</span> ' +
+            '<span class="countdown_section"><span class="countdown_amount">{sn}</span> {sl}</span>' +
+         '</span>'
+         
          });
       });
    </script>
 
    <link rel="stylesheet" type="text/css" href="/css/countdown.css" media="all" />
-   <!--[if IE]>
-   <link rel="stylesheet" type="text/css" href="/css/countdown.ie.css" media="all" />
-   <![endif]-->
 
    <link href="/atom.xml" rel="alternate" title="David Barr" type="application/atom+xml" />
    <link rel="stylesheet" href="/css/site.css" type="text/css" media="screen, projection" />
