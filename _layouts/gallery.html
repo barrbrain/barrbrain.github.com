@@ -7,7 +7,7 @@ layout: default
 
   {% for photo in page.photos %}
     <div class="photo" id="{{ photo.id }}">
-      <h3>{{ photo.title }}</h3>
+      <h3>{{ photo.title }} <g:plusone size="small" href="http://barrbrain.github.com{{ page.url }}#{{ photo.id }}" /></h3>
       <img alt="{{ photo.title }}" src="/img/{{ photo.file }}" />
       {{ photo.comment | textilize }}
     </div>
