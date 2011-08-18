@@ -3,7 +3,7 @@ layout: post
 title: First public commit for svn-dump-fast-export
 ---
 
-I, David Barr, have finally got around to contributing back to the open source community.
+I, David Michael Barr, have finally got around to contributing back to the open source community.
 
 My motivation is that I have an 800MB Subversion repository with about 23,000 commits and a non-standard structure. All the well-known git-svn import tools at this date either fail at 95% completion after days of computation, go crazy duplicating content on 3 commits or use an inordinate amount of memory, grinding near to a halt at 50% completion.
 The last of those descriptions applies to git2svn.py, the simplicity of which is stunning.

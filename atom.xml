@@ -4,14 +4,14 @@ layout: nil
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
  
- <title>David Barr</title>
+ <title>David Michael Barr</title>
  <link href="http://barrbrain.github.com/atom.xml" rel="self"/>
  <link href="http://barrbrain.github.com/"/>
  <updated>{{ site.time | date_to_xmlschema }}</updated>
  <id>http://barrbrain.github.com/</id>
  <author>
-   <name>David Barr</name>
-   <email>david.barr@cordelta.com</email>
+   <name>David Michael Barr</name>
+   <email>davidbarr@google.com</email>
  </author>
 
  {% for post in site.posts %}
