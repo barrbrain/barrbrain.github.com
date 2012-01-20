@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Presentation</title>
+
+    <meta charset='utf-8'>
+    <script
+      src='js/slides.js'></script>
+	<style>
+		section {
+			counter-reset: section;
+		}
+		article {
+			counter-increment:section;
+		}
+		article:not(.nocounter):after {
+			content: counter(section);
+			bottom: 1em;
+			position: absolute;
+			display: block;
+		}
+	</style>
+  </head>
+  
+  <body style='display: none'>
+
+    <section class='slides layout-regular template-default'>
+      
+      <article class="nocounter">
+        <h1>
+          VCS Interoperability
+        </h1>
+        <p>
+          David Barr
+          <br>
+          Jan 20, 2012
+        </p>
+		<p>
+		<img src="img/git_logo_192x106.jpg" style="vertical-align:middle;" alt="git">
+		&amp;
+		<img src="img/subversion_logo1.png" style="vertical-align:middle;height:162px;width:143px" alt="Subversion">
+		</p>
+      </article>
+      
+      <article>
+        <h3>
+          Scratching one's itch
+        </h3>
+		<p>Project at $JOB, March 2010 &mdash; 5 years, 22000 commits, 2.8GB
+		<ul>
+		<li><em>git-svn</em> &mdash; 4 days, NN GB RAM, failed at 90%
+		<li><em>svn-all-fast-export</em> &mdash; skip 3 commits or spew indefinitely
+		<li><em>svn2git.py</em> &mdash; quick for 50% then slowed to glacial pace
+		</ul>
+		</p>
+		<p><strong>Complete and timely conversion impossible!</strong></p>
+      </article>
+
+      <article>
+        <h3>
+          Sufficiently numerous anecdotes are data
+        </h3>
+		<p>Maybe it's not just my repository?</p>
+		<p>Reached out to the git community for anecdotes</p>
+		<p>Came with a proposal in hand</p>
+      </article>
+
+	  <article>
+        <h3>
+          Saved the world in less than 30 days
+        </h3>
+		<p>Jokes, lol</p>
+      </article>
+
+	  <article>
+        <h3>
+          OK, so it was hard. Why?
+        </h3>
+		<p>Mapping Subversion history to git DAG non-trivial
+		<ul>
+		<li>Empty directories
+		<li>File permissions
+		<li>Symlink representation
+		<li>Commit and file metadata
+		</ul>
+		</p>
+      </article>
+
+	  <article>
+        <h3>
+          So what was the proposal?
+        </h3>
+		<p>Translator &mdash; Subversion dump to git fast-import</p>
+		<p>Data structure that maps between them and scales linearly<p>
+		<p>Independent of both projects</p>
+		<p>Merged <em>svn-dump-fast-export</em> into git-contrib as <em>svn-fe</em>
+	  </article>
+
+	  <article>
+        <h3>
+          Sounds easy, why more than 30 days?
+        </h3>
+		<p>Although it 'uses only timeless fs concepts', verbs in Subversion dump format not clearly defined.
+		<ul>
+		<li>change
+		<li>add
+		<li>delete
+		<li>replace
+		</ul>
+		</p>
+		<p>The obvious one was delete, the rest full of surprises.</p>
+		<p>Thus began a 3 month protocol reverse-engineering effort.</p>
+	  </article>
+	
+      <article>
+        <h3>
+          So we have a translator, how is it fed?
+        </h3>
+		<p>Extracting complete history from Subversion server is hard.
+		<ul>
+			<li><em>svnsync</em> + <em>svnadmin dump</em>
+			<li><em>svk sync</em> + <em>svk admin dump</em>
+		</ul>
+		</p>
+		<p>For large repositories, ask for a compressed dump.</p>
+		<p>Enter <em>svnrdump</em>, the product of Ram's GSoC 2010 project.</p>
+	  </article>
+
+	  <article>
+        <h3>
+          <em>svnrdump</em> &mdash; Google Summer of Code 2010
+        </h3>
+		<h4>Ramkumar Ramachandra</h4>
+		<p>
+		<ul>
+		<li>First-class Subversion tool
+		<li><em>svnrdump dump</em>
+		<li><em>svnrdump load</em>
+		<li>General purpose tool suitable for *Nix style interaction
+		</ul>
+		</p>
+	  </article>
+	
+	  <article>
+        <h3>
+          Any issues with <em>git fast-import</em>?
+        </h3>
+		<p>Protocol extensions for bi-directional communication
+		<ul>
+		<li><em>cat-blob</em> &mdash; read existing or imported blob data
+		<li><em>ls</em> &mdash; inspect active commit or named trees
+		</ul>
+		</p>
+		<p>Complexity can be removed from the translator.</p>
+		<p>Applying Subversion binary deltas becomes straightforward.</p>
+	  </article>
+	
+	  <article>
+        <h3>
+          <em>git-remote-svn</em> &mdash; Google Summer of Code 2011
+        </h3>
+		<h4>Dmitry Ivankov</h4>
+		<p>
+		<ul>
+		<li><em>svn-fe</em> additional command-line flags
+		<li><em>git-remote-svn</em> wrapper in Python
+		<li>Numerous bug fixes for <em>git fast-import</em>
+		<li>Documentation fixes for <em>git fast-import</em>
+		<li>Use <em>cat-blob</em> as a hint for delta computation
+		</ul>
+		</p>
+	  </article>
+
+	  <article>
+        <h3>
+          <em>remote-helper</em> improvements
+        </h3>
+		<h4>
+			Sverre Rabbelier, Jeff King, et al.
+		</h4>
+		<p>In parallel to all this work, there were many improvements to the remote helper infrastructure which would ultimately be used to integrate the translator into the natural git flow.</p>		
+		<p>Jérémie Nikaes' <em>git-remote-mediawiki</em> helped spur things along.</p>
+	  </article>
+
+      <article>
+        <h3>
+          Future work
+        </h3>
+		<p>
+		<ul>
+		<li>Merge outstanding GSoC patches into git-core
+	    <li>Upstream <em>vcs-svn</em> from git-core to <em>svn-dump-fast-export</em>
+	    <li>Implement <em>fast-import</em> protocol extensions for <em>hg</em> or <em>bzr</em>
+	    <li>Reverse translator to enable writing to Subversion
+	    <li>Integrate svn-dump-fast-export with <em>hg</em> or <em>bzr</em>
+		</p>
+      </article>
+
+      <article>
+        <h3>
+          Merge outstanding GSoC patches into git-core
+        </h3>
+		<p>
+		<ul>
+		<li>90+ patches not yet merged into jch/master
+		<li>prioritise topics and reorder for submission
+		<li>garner support for inclusion
+		</ul>
+		</p>
+      </article>
+
+      <article>
+        <h3>
+          Upstream <em>vcs-svn</em> from git-core to <em>svn-dump-fast-export</em>
+        </h3>
+      </article>
+
+      <article>
+        <h3>
+          Implement <em>fast-import</em> protocol extensions for <em>hg</em> or <em>bzr</em>
+        </h3>
+      </article>
+
+
+      <article>
+        <h3>
+          Reverse translator to enable writing to Subversion
+        </h3>
+      </article>
+
+      <article>
+        <h3>
+          Integrate svn-dump-fast-export with <em>hg</em> or <em>bzr</em>
+        </h3>
+      </article>
+
+
+      <article class="nocounter">
+        <h3>
+          Questions &amp; Answers
+        </h3>
+      </article>
+
+      <article class="nocounter">
+        <h3>
+          Thank you
+        </h3>
+		<p>For more information or to get involved email <em>davidbarr@google.com</em> and consider cc'ing <em>git@vger.kernel.org</em></p>
+		<p>Git Logo and Icon by Dylan Beattie distributed under <a href="http://creativecommons.org/licenses/by-sa/3.0/" target="_blank">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</p>
+      </article>
+    </section>
+
+  </body>
+</html>
