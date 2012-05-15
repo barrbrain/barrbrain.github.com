@@ -3,7 +3,6 @@
 body {
   background-color: #cde;
   font-family: serif ;
-  text-align: justify;
   line-height: 1.3em;
   max-width: 75ex;
   padding: 1em;
@@ -18,6 +17,7 @@ h1, h2, h3, h4, h5, h6 {
 
 p {
   margin: 1em 0;
+  text-align: justify;
 }
 
 a {
@@ -52,6 +52,7 @@ pre {
   padding: 1ex;
   border: solid black 1px;
   overflow: hidden;
+  clear: both;
 }
 
 /* Tweaks for specific elements */
@@ -99,4 +100,5 @@ ul span:after {
   border: solid white 5px;
   border-radius: 10px;
   margin-left: 10px;
+  margin-bottom: 10px;
 }
