@@ -7,7 +7,7 @@ title: David Michael Barr
   <h1>Rants and raves</h1>
   <ul class="posts">
     {% for post in site.posts %}
-      <li><span>{{ post.date | date_to_string }}</span> <a href="{{ post.url }}">{{ post.title }}</a> <g:plusone size="small" href="http://barrbrain.github.com{{ post.url }}" /></li>
+      <li><span>{{ post.date | date_to_string }}</span> <a href="{{ post.url }}">{{ post.title }}</a> <g:plusone size="small" annotation="inline" width="120" href="http://barrbrain.github.com{{ post.url }}" /></li>
     {% endfor %}
   </ul>
 </div>
