@@ -4,7 +4,6 @@ body {
   background-color: #cde;
   font-family: serif ;
   line-height: 1.3em;
-  max-width: 75ex;
   padding: 1em;
   margin: 1em auto 0 auto;
   color: #012;
@@ -18,6 +17,7 @@ h1, h2, h3, h4, h5, h6 {
 p {
   margin: 1em 0;
   text-align: justify;
+  max-width: 65ex;
 }
 
 a {
