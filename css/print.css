@@ -1,17 +1,23 @@
 body {
-  font-family: Palatino, 'Palatino Linotype', Georgia, Times, 'Times New Roman', serif ;
+  font-family: serif;
+  -webkit-column-count: 2;
+  -moz-column-count: 2;
+  column-count: 2;
 }
-div {
-  max-width: 80ex ;
-}
+
 p {
-  text-indent: 1em ;
-  text-align: justify ; 
-  margin-bottom: 0px ;
-  margin-top: 0px ;
+  text-indent: 1em;
+  text-align: justify; 
+  margin-bottom: 0px;
+  margin-top: 0px;
+  max-width: 65ex;
 }
-.footer {
-  border-top: 1pt solid #000;
-  margin-top: 1em;
-  overflow: hidden;
+
+.footer , iframe {
+  display: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
 }
