@@ -11,7 +11,7 @@ layout: nil
  <id>http://ba.rr-dav.id.au/</id>
  <author>
    <name>David Michael Barr</name>
-   <email>davidbarr@google.com</email>
+   <email>b@rr-dav.id.au</email>
  </author>
 
  {% for post in site.posts %}
