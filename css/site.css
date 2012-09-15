@@ -52,6 +52,7 @@ ul li {
 }
 
 pre {
+  font-family: "Anonymous Pro", monospace;
   font-size: 80%;
   padding: 1ex;
   border: solid black 1px;
