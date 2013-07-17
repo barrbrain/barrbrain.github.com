@@ -49,6 +49,7 @@ ul {
 
 ul li {
   line-height: 1.5em;
+  -webkit-column-break-inside: avoid;
 }
 
 pre {
@@ -56,8 +57,9 @@ pre {
   font-size: 80%;
   padding: 1ex;
   border: solid black 1px;
-  overflow: hidden;
+  overflow: scroll;
   clear: both;
+  -webkit-column-break-inside: avoid;
 }
 
 /* Tweaks for specific elements */
