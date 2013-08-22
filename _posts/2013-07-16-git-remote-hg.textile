@@ -11,6 +11,7 @@ curl -O https://raw.github.com/git/git/master/contrib/remote-helpers/git-remote-
 chmod +x git-remote-hg
 mv git-remote-hg ~/bin/
 git config --global remote-hg.hg-git-compat true
+git config --global remote-hg.force-push false
 
 git clone hg::<hg-url>
 
