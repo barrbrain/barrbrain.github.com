@@ -100,7 +100,7 @@ ul span:after {
 @media all and (min-width: 800px) {
   .title::after {
     content: "";
-    background-image: url(/img/barrbrain-2012.jpg);
+    background-image: url(/img/barrbrain-2015.jpg);
     float: right;
     width: 246px;
     height: 246px;
