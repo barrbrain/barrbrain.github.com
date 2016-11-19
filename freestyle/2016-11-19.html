@@ -1,64 +1,25 @@
 <html><head>
 <script>
-var rudyMargin = 0;
-var rudyDirection = 1;
-function moveRudy() {
-   var rudolph = document.getElementById('rudolph');
-   rudyMargin += rudyDirection;
-   if (rudyMargin == 100) {
-      rudyDirection = -1;
+var margin = {rudolph: 0, dasher: 0, dancer: 0, blixen: 0};
+var direction = {rudolph: 1, dasher: 1, dancer: 1, blixen: 1};
+function moveOne(deer, maxMargin) {
+   margin[deer] += direction[deer];
+   if (margin[deer] == maxMargin) {
+      direction[deer] = -1;
    }
-   if (rudyMargin == 0) {
-      rudyDirection = 1;
+   if (margin[deer] == 0) {
+      direction[deer] = 1;
    }
-   rudolph.style.marginLeft = rudyMargin;
+   document.getElementById(deer).style.marginLeft = margin[deer];
 }
-var dasherMargin = 0;
-var dasherDirection = 1;
-function moveDasher() {
-   var dasher = document.getElementById('dasher');
-   dasherMargin += dasherDirection;
-   if (dasherMargin == 19) {
-      dasherDirection = -1;
-   }
-   if (dasherMargin == 0) {
-      dasherDirection = 1;
-   }
-   dasher.style.marginLeft = dasherMargin;
+function moveReindeer(ts) {
+   moveOne('rudolph', 100);
+   moveOne('dasher', 19);
+   moveOne('dancer', 17);
+   moveOne('blixen', 13);
+   requestAnimationFrame(moveReindeer);
 }
-var dancerMargin = 0;
-var dancerDirection = 1;
-function moveDancer() {
-   var dancer = document.getElementById('dancer');
-   dancerMargin += dancerDirection;
-   if (dancerMargin == 17) {
-      dancerDirection = -1;
-   }
-   if (dancerMargin == 0) {
-      dancerDirection = 1;
-   }
-   dancer.style.marginLeft = dancerMargin;
-}
-var blixenMargin = 0;
-var blixenDirection = 1;
-function moveBlixen() {
-   var blixen = document.getElementById('blixen');
-   blixenMargin += blixenDirection;
-   if (blixenMargin == 17) {
-      blixenDirection = -1;
-   }
-   if (blixenMargin == 0) {
-      blixenDirection = 1;
-   }
-   blixen.style.marginLeft = blixenMargin;
-}
-function moveReindeer() {
-   moveRudy();
-   moveDasher();
-   moveDancer();
-   moveBlixen();
-}
-setInterval(moveReindeer, 40);
+window.onload = moveReindeer;
 </script>
 </head><body style="background-image:url(falling-snow-fKlmUy-clipart.jpg); background-size:cover">
 <div>
