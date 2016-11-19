@@ -1,0 +1,75 @@
+<html><head>
+<script>
+var rudyMargin = 0;
+var rudyDirection = 1;
+function moveRudy() {
+   var rudolph = document.getElementById('rudolph');
+   rudyMargin += rudyDirection;
+   if (rudyMargin == 100) {
+      rudyDirection = -1;
+   }
+   if (rudyMargin == 0) {
+      rudyDirection = 1;
+   }
+   rudolph.style.marginLeft = rudyMargin;
+}
+var dasherMargin = 0;
+var dasherDirection = 1;
+function moveDasher() {
+   var dasher = document.getElementById('dasher');
+   dasherMargin += dasherDirection;
+   if (dasherMargin == 19) {
+      dasherDirection = -1;
+   }
+   if (dasherMargin == 0) {
+      dasherDirection = 1;
+   }
+   dasher.style.marginLeft = dasherMargin;
+}
+var dancerMargin = 0;
+var dancerDirection = 1;
+function moveDancer() {
+   var dancer = document.getElementById('dancer');
+   dancerMargin += dancerDirection;
+   if (dancerMargin == 17) {
+      dancerDirection = -1;
+   }
+   if (dancerMargin == 0) {
+      dancerDirection = 1;
+   }
+   dancer.style.marginLeft = dancerMargin;
+}
+var blixenMargin = 0;
+var blixenDirection = 1;
+function moveBlixen() {
+   var blixen = document.getElementById('blixen');
+   blixenMargin += blixenDirection;
+   if (blixenMargin == 17) {
+      blixenDirection = -1;
+   }
+   if (blixenMargin == 0) {
+      blixenDirection = 1;
+   }
+   blixen.style.marginLeft = blixenMargin;
+}
+function moveReindeer() {
+   moveRudy();
+   moveDasher();
+   moveDancer();
+   moveBlixen();
+}
+setInterval(moveReindeer, 40);
+</script>
+</head><body style="background-image:url(http://www.clipartkid.com/images/770/falling-snow-fKlmUy-clipart.jpg); background-size:cover">
+<div>
+   <img src="http://images.clipartpanda.com/reindeer-clipart-reindeer_christmas.png" style="max-width: 100px" id="rudolph">
+   <img src="http://images.clipartpanda.com/reindeer-clipart-reindeer_christmas.png" style="max-width:100px" id="dasher">
+   <img src="http://images.clipartpanda.com/reindeer-clipart-reindeer_christmas.png" style="max-width:100px" id="dancer">
+   <img src="http://images.clipartpanda.com/reindeer-clipart-reindeer_christmas.png" style="max-width:100px" id="blixen">
+   <img src="http://www.pngall.com/wp-content/uploads/2016/05/Santa-Claus-PNG-Image.png" style="max-height:170px">
+</div>
+<img src="http://www.clipartkid.com/images/348/grass-border-no-background-clipart-panda-free-clipart-images-dVaC8l-clipart.png"
+     style="position:absolute; bottom:0; right: 50%; max-height: 80%;">
+<img src="http://www.clipartkid.com/images/348/grass-border-no-background-clipart-panda-free-clipart-images-dVaC8l-clipart.png"
+     style="position:absolute; bottom:0; left: 50%;  max-height: 80%;">
+</body></html>
