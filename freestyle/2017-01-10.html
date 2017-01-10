@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<body><script src="//pencilcode.net/turtlebits.js" crossorigin="anonymous" type="text/javascript"></script><script type="text/coffeescript">
+eval(this._start_ide_cs_);
+
+triangle = (c, s) ->
+  pen path
+  for n in [1, 2, 3]
+    fd s
+    lt 120
+  fill c
+  
+rectangle = (c, s1, s2) ->
+  pen path
+  for s in [s1, s2, s1, s2]
+    fd s
+    lt 90
+  fill c
+
+lt 30
+triangle tan, 59
+rectangle aqua, 30
+lt 15
+triangle tan, 30
+
+</script></body></html>
