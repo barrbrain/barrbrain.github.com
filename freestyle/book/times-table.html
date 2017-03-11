@@ -1,0 +1,27 @@
+<!doctype html>
+<html><head><style>
+
+table {
+  font-size: 40px;
+}
+td {
+  width: 3em;
+}
+
+</style></head><body>
+<script src="http://pencilcode.net/turtlebits.js" crossorigin="anonymous" type="text/javascript" turtle="false">
+</script><script type="text/coffeescript">
+eval(this._start_ide_cs_);
+
+write "<h1>Times Table ×</h1>"
+table = "<table>"
+for A in [1..10]
+  row = "<tr>"
+  for B in [1..10]
+    row += "<td>" + A * B + "</td>"
+  row += "</tr>"
+  table += row
+table += "</table>"
+write table
+
+</script></body></html>
