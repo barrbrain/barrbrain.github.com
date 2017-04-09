@@ -25,7 +25,7 @@ p {
 }
 
 a {
-  color: #369;
+  color: #359;
   text-decoration: none;
 }
 
@@ -34,7 +34,7 @@ a:visited {
 }
 
 a:hover {
-  color: #567;
+  color: #459;
 }
 
 a > img {
