@@ -63,9 +63,9 @@
         b = imageData.data[off + 4];
         c = imageData.data[off + width * 2]
         d = imageData.data[off + width * 2 + 4];
-        e = 13 * (a + b - c - d);
-        f = 13 * (a - b + c - d);
-        g = 13 * (a - b - c + d);
+        e = 13 * (a + b - c - d) * multiplier | 0;
+        f = 13 * (a - b + c - d) * multiplier | 0;
+        g = 13 * (a - b - c + d) * multiplier | 0;
         h = 4 * e; i = 4 * f; j = 3 * g;
         k = h + j; l = h - j; m = i + j; n = i - j;
         a = a * 1024 + 512; b = b * 1024 + 512;
