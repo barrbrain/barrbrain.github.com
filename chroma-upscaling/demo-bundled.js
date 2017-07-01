@@ -59,78 +59,45 @@ module.exports = {
     }
   }
 
-  function predictChromaToPlane(lumaData, imageData, plane, width, height, multiplier) {
+  function predictChromaToPlane(imageData, plane, width, height, multiplier) {
     // Because we're doing multiplication that may wrap, use the browser-optimized
     // Uint8ClampedArray instead of the default Uint8Array view.
     var clampedBytes = new Uint8ClampedArray(plane.bytes.buffer, plane.bytes.offset, plane.bytes.byteLength);
-    var ySub = new Uint8ClampedArray(4);
     for (var y = 0; y < height; y += 4) {
       for (var x = 0; x < width; x += 4) {
-        var off = y * width * 4 + x * 4;
-	var yAvg = 0;
-	var cAvg = 0;
-	var LL = 0;
-	var LC = 0;
-	var alpha = 0;
-        ySub[0] = (lumaData.data[off] + lumaData.data[off + 4] +
-		   lumaData.data[off + width * 4] + lumaData.data[off + width * 4 + 4] + 2) >> 2;
-	off += 8;
-        ySub[1] = (lumaData.data[off] + lumaData.data[off + 4] +
-		   lumaData.data[off + width * 4] + lumaData.data[off + width * 4 + 4] + 2) >> 2;
-	off += width * 8 - 8;
-        ySub[2] = (lumaData.data[off] + lumaData.data[off + 4] +
-		   lumaData.data[off + width * 4] + lumaData.data[off + width * 4 + 4] + 2) >> 2;
-	off += 8;
-        ySub[3] = (lumaData.data[off] + lumaData.data[off + 4] +
-		   lumaData.data[off + width * 4] + lumaData.data[off + width * 4 + 4] + 2) >> 2;
-	yAvg = (ySub[0] + ySub[1] + ySub[2] + ySub[3] + 2) >> 2;
-	LL = (ySub[0] - yAvg) * (ySub[0] - yAvg) + (ySub[1] - yAvg) * (ySub[1] - yAvg) +
-             (ySub[2] - yAvg) * (ySub[2] - yAvg) + (ySub[3] - yAvg) * (ySub[3] - yAvg);
-	off = y * width + x * 2;
-        cAvg = (imageData.data[off] + imageData.data[off + 4] +
-		imageData.data[off + width * 2] + imageData.data[off + width * 2 + 4] + 2) >> 2;
-        LC = (ySub[0] - yAvg) * (imageData.data[off] - cAvg) +
-             (ySub[1] - yAvg) * (imageData.data[off + 4] - cAvg) +
-             (ySub[2] - yAvg) * (imageData.data[off + width * 2] - cAvg) +
-             (ySub[3] - yAvg) * (imageData.data[off + width * 2 + 4] - cAvg);
-	if (LL != 0) alpha = LC / LL;
-	if (alpha < -1 || alpha > 1) alpha = 0;
+	var off = y * width + x * 2;
+	var a, b, c, d, e, f, g, h, i, j, k, l, m, n;
+        a = imageData.data[off];
+        b = imageData.data[off + 4];
+        c = imageData.data[off + width * 2]
+        d = imageData.data[off + width * 2 + 4];
+        e = 13 * (a + b - c - d);
+        f = 13 * (a - b + c - d);
+        g = 13 * (a - b - c + d);
+        h = 4 * e; i = 4 * f; j = 3 * g;
+        k = h + j; l = h - j; m = i + j; n = i - j;
+        a = a * 1024 + 512; b = b * 1024 + 512;
+        c = c * 1024 + 512; d = d * 1024 + 512;
 	off = y * width * 4 + x * 4;
-        clampedBytes[y * plane.stride + x] = imageData.data[y * width + x * 2] +
-             (lumaData.data[off] - ySub[0]) * alpha * multiplier;
-        clampedBytes[y * plane.stride + x + 1] = imageData.data[y * width + x * 2] +
-             (lumaData.data[off + 4] - ySub[0]) * alpha * multiplier;
-        clampedBytes[y * plane.stride + x + plane.stride] = imageData.data[y * width + x * 2] +
-             (lumaData.data[off + width * 4] - ySub[0]) * alpha * multiplier;
-        clampedBytes[y * plane.stride + x + plane.stride + 1] = imageData.data[y * width + x * 2] +
-             (lumaData.data[off + width * 4 + 4] - ySub[0]) * alpha * multiplier;
+        clampedBytes[y * plane.stride + x] = (a+k+m+g) >> 10;
+        clampedBytes[y * plane.stride + x + 1] = (a+k-m-g) >> 10;
+        clampedBytes[y * plane.stride + x + plane.stride] = (a-k+m-g) >> 10;
+        clampedBytes[y * plane.stride + x + plane.stride + 1] = (a-k-m+g) >> 10;
         off += 8;
-        clampedBytes[y * plane.stride + x + 2] = imageData.data[y * width + x * 2 + 4] +
-             (lumaData.data[off] - ySub[1]) * alpha * multiplier;
-        clampedBytes[y * plane.stride + x + 3] = imageData.data[y * width + x * 2 + 4] +
-             (lumaData.data[off + 4] - ySub[1]) * alpha * multiplier;
-        clampedBytes[y * plane.stride + x + plane.stride + 2] = imageData.data[y * width + x * 2 + 4] +
-             (lumaData.data[off + width * 4] - ySub[1]) * alpha * multiplier;
-        clampedBytes[y * plane.stride + x + plane.stride + 3] = imageData.data[y * width + x * 2 + 4] +
-             (lumaData.data[off + width * 4 + 4] - ySub[1]) * alpha * multiplier;
+        clampedBytes[y * plane.stride + x + 2] = (b+l+m+g) >> 10;
+        clampedBytes[y * plane.stride + x + 3] = (b+l-m-g) >> 10;
+        clampedBytes[y * plane.stride + x + plane.stride + 2] = (b-l+m-g) >> 10;
+        clampedBytes[y * plane.stride + x + plane.stride + 3] = (b-l-m+g) >> 10;
         off += width * 8 - 8;
-        clampedBytes[(y + 2) * plane.stride + x] = imageData.data[(y + 2) * width + x * 2] +
-             (lumaData.data[off] - ySub[2]) * alpha * multiplier;
-        clampedBytes[(y + 2) * plane.stride + x + 1] = imageData.data[(y + 2) * width + x * 2] +
-             (lumaData.data[off + 4] - ySub[2]) * alpha * multiplier;
-        clampedBytes[(y + 2) * plane.stride + x + plane.stride] = imageData.data[(y + 2) * width + x * 2] +
-             (lumaData.data[off + width * 4] - ySub[2]) * alpha * multiplier;
-        clampedBytes[(y + 2) * plane.stride + x + plane.stride + 1] = imageData.data[(y + 2) * width + x * 2] +
-             (lumaData.data[off + width * 4 + 4] - ySub[2]) * alpha * multiplier;
+        clampedBytes[(y + 2) * plane.stride + x] = (c+k+n+g) >> 10;
+        clampedBytes[(y + 2) * plane.stride + x + 1] = (c+k-n-g) >> 10;
+        clampedBytes[(y + 2) * plane.stride + x + plane.stride] = (c-k+n-g) >> 10;
+        clampedBytes[(y + 2) * plane.stride + x + plane.stride + 1] = (c-k-n+g) >> 10;
         off += 8;
-        clampedBytes[(y + 2) * plane.stride + x + 2] = imageData.data[(y + 2) * width + x * 2 + 4] +
-             (lumaData.data[off] - ySub[3]) * alpha * multiplier;
-        clampedBytes[(y + 2) * plane.stride + x + 3] = imageData.data[(y + 2) * width + x * 2 + 4] +
-             (lumaData.data[off + 4] - ySub[3]) * alpha * multiplier;
-        clampedBytes[(y + 2) * plane.stride + x + plane.stride + 2] = imageData.data[(y + 2) * width + x * 2 + 4] +
-             (lumaData.data[off + width * 4] - ySub[3]) * alpha * multiplier;
-        clampedBytes[(y + 2) * plane.stride + x + plane.stride + 3] = imageData.data[(y + 2) * width + x * 2 + 4] +
-             (lumaData.data[off + width * 4 + 4] - ySub[3]) * alpha * multiplier;
+        clampedBytes[(y + 2) * plane.stride + x + 2] = (d+l+n+g) >> 10;
+        clampedBytes[(y + 2) * plane.stride + x + 3] = (d+l-n-g) >> 10;
+        clampedBytes[(y + 2) * plane.stride + x + plane.stride + 2] = (d-l+n-g) >> 10;
+        clampedBytes[(y + 2) * plane.stride + x + plane.stride + 3] = (d-l-n+g) >> 10;
       }
     }
   }
@@ -166,10 +133,10 @@ module.exports = {
       copyBrightnessToPlane(sourceData.y, frame.y, format.width, format.height, sourceFader.y);
     }
     if (sourceData.u) {
-      predictChromaToPlane(sourceData.y, sourceData.u, frame.u, format.width, format.height, sourceFader.u);
+      predictChromaToPlane(sourceData.u, frame.u, format.width, format.height, sourceFader.u);
     }
     if (sourceData.v) {
-      predictChromaToPlane(sourceData.y, sourceData.v, frame.v, format.width, format.height, sourceFader.v);
+      predictChromaToPlane(sourceData.v, frame.v, format.width, format.height, sourceFader.v);
     }
 
     yuvCanvas.drawFrame(frame);
