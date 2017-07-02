@@ -3,10 +3,19 @@
 <head>
   <meta charset=utf-8>
   <title>Chroma upscaling demo, with yuv-canvas</title>
+  <link rel="stylesheet" href="/css/site.css" type="text/css" media="screen, projection" />
 </head>
 <body>
   <h1>Chroma upscaling demo, with <a href="https://github.com/brion/yuv-canvas">yuv-canvas</a></h1>
-  
+
+  <p style="max-width:640px">This was inspired by Luc Trudeau's
+  <a href="http://nbviewer.jupyter.org/gist/luctrudeau/e12497a081b94bbbe5bb889b3f169417/Chroma%20from%20Luma%20Basis%20Functions.ipynb">CfL in Action</a>
+  notebook but doesn't incorporate any chroma-from-luma logic.
+  It turned out that simple linear filters on the chroma planes gave about 90% of the gain from CfL.<br/>
+  The edges are filtered from 2x2 inputs and the the interior blocks from 3x3 inputs.
+  The weights were trained on the <a href="http://r0k.us/graphics/kodak/">Kodak Lossless True Color Image Suite</a>.
+  </p>
+
   <p>This canvas is drawn from the three planar images below:</p>
 
   <canvas></canvas>
