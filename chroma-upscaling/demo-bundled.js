@@ -65,8 +65,8 @@ module.exports = {
     var clampedBytes = new Uint8ClampedArray(plane.bytes.buffer, plane.bytes.offset, plane.bytes.byteLength);
     for (var y = 0; y < height; y += 4) {
       for (var x = 0; x < width; x += 4) {
-	var off = y * width + x * 2;
-	var a, b, c, d, e, f, g, h, i, j, k, l, m, n;
+        var off = y * width + x * 2;
+        var a, b, c, d, e, f, g, h, i, j, k, l, m, n;
         a = imageData.data[off];
         b = imageData.data[off + 4];
         c = imageData.data[off + width * 2]
@@ -78,7 +78,7 @@ module.exports = {
         k = h + j; l = h - j; m = i + j; n = i - j;
         a = a * 1024 + 512; b = b * 1024 + 512;
         c = c * 1024 + 512; d = d * 1024 + 512;
-	off = y * width * 4 + x * 4;
+        off = y * width * 4 + x * 4;
         clampedBytes[y * plane.stride + x] = (a+k+m+g) >> 10;
         clampedBytes[y * plane.stride + x + 1] = (a+k-m-g) >> 10;
         clampedBytes[y * plane.stride + x + plane.stride] = (a-k+m-g) >> 10;
@@ -98,6 +98,30 @@ module.exports = {
         clampedBytes[(y + 2) * plane.stride + x + 3] = (d+l-n-g) >> 10;
         clampedBytes[(y + 2) * plane.stride + x + plane.stride + 2] = (d-l+n-g) >> 10;
         clampedBytes[(y + 2) * plane.stride + x + plane.stride + 3] = (d-l-n+g) >> 10;
+      }
+    }
+    for (var y = 2; y + 2 < height; y += 2) {
+      for (var x = 2; x + 2 < width; x += 2) {
+        var off = (y - 2) * width + x * 2 - 4;
+        var a, b, c, d, e, f, g, h, i, j, k, l;
+        a = imageData.data[off];
+        b = imageData.data[off + 4];
+        c = imageData.data[off + 8];
+        d = imageData.data[off + width * 2]
+        e = imageData.data[off + width * 2 + 4];
+        f = imageData.data[off + width * 2 + 8];
+        g = imageData.data[off + width * 4]
+        h = imageData.data[off + width * 4 + 4];
+        i = imageData.data[off + width * 4 + 8];
+        j = 6 * (b - h) * (105 * multiplier | 0);
+        k = 6 * (d - f) * (105 * multiplier | 0);
+        l = ((a + i) - (c + g)) * (105 * multiplier | 0);
+        e = e * 4096 + 2048;
+        off = y * width * 4 + x * 4;
+        clampedBytes[y * plane.stride + x] = (e+j+k+l) >> 12;
+        clampedBytes[y * plane.stride + x + 1] = (e+j-k-l) >> 12;
+        clampedBytes[y * plane.stride + x + plane.stride] = (e-j+k-l) >> 12;
+        clampedBytes[y * plane.stride + x + plane.stride + 1] = (e-j-k+l) >> 12;
       }
     }
   }
