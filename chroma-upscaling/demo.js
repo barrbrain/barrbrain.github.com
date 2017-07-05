@@ -55,6 +55,8 @@
     // Because we're doing multiplication that may wrap, use the browser-optimized
     // Uint8ClampedArray instead of the default Uint8Array view.
     var clampedBytes = new Uint8ClampedArray(plane.bytes.buffer, plane.bytes.offset, plane.bytes.byteLength);
+    var D = 13 * multiplier | 0;
+    var HV = 6 * D;
     for (var y = 0; y < height; y += 4) {
       for (var x = 0; x < width; x += 4) {
         var off = y * width + x * 2;
@@ -63,9 +65,9 @@
         b = imageData.data[off + 4];
         c = imageData.data[off + width * 2]
         d = imageData.data[off + width * 2 + 4];
-        e = 13 * (a + b - c - d) * multiplier | 0;
-        f = 13 * (a - b + c - d) * multiplier | 0;
-        g = 13 * (a - b - c + d) * multiplier | 0;
+        e = D * (a + b - c - d);
+        f = D * (a - b + c - d);
+        g = D * (a - b - c + d);
         h = 4 * e; i = 4 * f; j = 3 * g;
         k = h + j; l = h - j; m = i + j; n = i - j;
         a = a * 1024 + 512; b = b * 1024 + 512;
@@ -105,15 +107,15 @@
         g = imageData.data[off + width * 4]
         h = imageData.data[off + width * 4 + 4];
         i = imageData.data[off + width * 4 + 8];
-        j = 6 * (b - h) * (105 * multiplier | 0);
-        k = 6 * (d - f) * (105 * multiplier | 0);
-        l = ((a + i) - (c + g)) * (105 * multiplier | 0);
-        e = e * 4096 + 2048;
+        j = HV * (b - h);
+        k = HV * (d - f);
+        l = D * ((a + i) - (c + g));
+        e = e * 512 + 256;
         off = y * width * 4 + x * 4;
-        clampedBytes[y * plane.stride + x] = (e+j+k+l) >> 12;
-        clampedBytes[y * plane.stride + x + 1] = (e+j-k-l) >> 12;
-        clampedBytes[y * plane.stride + x + plane.stride] = (e-j+k-l) >> 12;
-        clampedBytes[y * plane.stride + x + plane.stride + 1] = (e-j-k+l) >> 12;
+        clampedBytes[y * plane.stride + x] = (e+j+k+l) >> 9;
+        clampedBytes[y * plane.stride + x + 1] = (e+j-k-l) >> 9;
+        clampedBytes[y * plane.stride + x + plane.stride] = (e-j+k-l) >> 9;
+        clampedBytes[y * plane.stride + x + plane.stride + 1] = (e-j-k+l) >> 9;
       }
     }
   }
