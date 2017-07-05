@@ -26,6 +26,20 @@
   <p>The edges are filtered from 2x2 inputs and the the interior blocks from 3x3 inputs.
   The weights were trained on the <a href="http://r0k.us/graphics/kodak/">Kodak Lossless True Color Image Suite</a>.</p>
 
+  <p style="text-align:center">
+  `C = [[0, 0, 0], [0, 1, 0], [0, 0, 0]],`
+  `H = 13/128[[0, 6, 0], [0, 0, 0], [0, -6, 0]],`
+  `V = 13/128[[0, 0, 0], [6, 0, -6], [0, 0, 0]],`
+  `D = 13/128[[1, 0, -1], [0, 0, 0], [-1, 0, 1]]`
+  </p>
+
+  <p style="text-align:center">
+  `y = (C*x)`
+  `+ (H*x) 1/4[[1, 1], [-1, -1]]`
+  `+ (V*x) 1/4[[1, -1], [1, -1]]`
+  `+ (D*x) 1/4[[1, -1], [-1,  1]]`
+  </p>
+
   <p>The canvas is drawn from the three planar images below.
   Try moving the sliders to alter to each plane separately.
   The Y slider controls luma contrast.
@@ -55,6 +69,7 @@
   </div>
 
   <script src="demo-bundled.js"></script>
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML"></script>
   <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
