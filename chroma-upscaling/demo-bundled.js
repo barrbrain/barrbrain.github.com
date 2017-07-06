@@ -59,7 +59,7 @@ module.exports = {
     }
   }
 
-  function predictChromaToPlane(imageData, plane, width, height, multiplier) {
+  function predictChromaToPlane(yData, imageData, plane, width, height, multiplier) {
     // Because we're doing multiplication that may wrap, use the browser-optimized
     // Uint8ClampedArray instead of the default Uint8Array view.
     var clampedBytes = new Uint8ClampedArray(plane.bytes.buffer, plane.bytes.offset, plane.bytes.byteLength);
@@ -120,6 +120,22 @@ module.exports = {
         l = D * ((a + i) - (c + g));
         e = e * 512 + 256;
         off = y * width * 4 + x * 4;
+        a = yData.data[off];
+        b = yData.data[off + 4];
+        c = yData.data[off + width * 4]
+        d = yData.data[off + width * 4 + 4];
+        g = a + b - c - d;
+        h = a - b + c - d;
+        i = a - b - c + d;
+        var dot = j * g + k * h + l * i;
+        var g1 = j * j + k * k + l * l;
+        var g2 = g * g + h * h + i * i;
+        if (dot * dot * 4 > g1 * g2) {
+          var s = dot / g2 + .5 | 0;
+          j = g * s;
+          k = h * s;
+          l = i * s;
+        }
         clampedBytes[y * plane.stride + x] = (e+j+k+l) >> 9;
         clampedBytes[y * plane.stride + x + 1] = (e+j-k-l) >> 9;
         clampedBytes[y * plane.stride + x + plane.stride] = (e-j+k-l) >> 9;
@@ -159,10 +175,10 @@ module.exports = {
       copyBrightnessToPlane(sourceData.y, frame.y, format.width, format.height, sourceFader.y);
     }
     if (sourceData.u) {
-      predictChromaToPlane(sourceData.u, frame.u, format.width, format.height, sourceFader.u);
+      predictChromaToPlane(sourceData.y, sourceData.u, frame.u, format.width, format.height, sourceFader.u);
     }
     if (sourceData.v) {
-      predictChromaToPlane(sourceData.v, frame.v, format.width, format.height, sourceFader.v);
+      predictChromaToPlane(sourceData.y, sourceData.v, frame.v, format.width, format.height, sourceFader.v);
     }
 
     yuvCanvas.drawFrame(frame);

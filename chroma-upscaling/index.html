@@ -20,11 +20,13 @@
   <article>
   <p>This was inspired by Luc Trudeau's
   <a href="http://nbviewer.jupyter.org/gist/luctrudeau/e12497a081b94bbbe5bb889b3f169417/Chroma%20from%20Luma%20Basis%20Functions.ipynb">CfL in Action</a>
-  notebook but doesn't incorporate any chroma-from-luma logic.
-  It turned out that simple linear filters on the chroma planes gave about 90% of the gain from CfL.</p>
+  notebook but didn't initially incorporate any chroma-from-luma logic.
+  It turned out that simple linear filters on the chroma planes gave most of the gain from CfL.</p>
 
   <p>The edges are filtered from 2x2 inputs and the interior blocks from 3x3 inputs.
-  The weights were trained on the <a href="http://r0k.us/graphics/kodak/">Kodak Lossless True Color Image Suite</a>.</p>
+  The weights were trained on the <a href="http://r0k.us/graphics/kodak/">Kodak Lossless True Color Image Suite</a>.
+  If the resulting prediction is well correlated with luma, it is used to estimate the gain and sign for CfL.
+  </p>
 
   <p style="text-align:center">
   `C = [[0, 0, 0], [0, 1, 0], [0, 0, 0]],`
