@@ -119,10 +119,9 @@
         g = a + b - c - d;
         h = a - b + c - d;
         i = a - b - c + d;
-        var dot = j * g + k * h + l * i;
-        var g1 = j * j + k * k + l * l;
         var g2 = g * g + h * h + i * i;
-        if (dot * dot * 4 > g1 * g2) {
+        if (g2 > 0) {
+          var dot = j * g + k * h + l * i;
           var s = dot / g2 + .5 | 0;
           j = g * s;
           k = h * s;

@@ -20,8 +20,8 @@
   <article>
   <p>This was inspired by Luc Trudeau's
   <a href="http://nbviewer.jupyter.org/gist/luctrudeau/e12497a081b94bbbe5bb889b3f169417/Chroma%20from%20Luma%20Basis%20Functions.ipynb">CfL in Action</a>
-  notebook but didn't initially incorporate any chroma-from-luma logic.
-  It turned out that simple linear filters on the chroma planes gave most of the gain from CfL.</p>
+  notebook but early iterations didn't incorporate any chroma-from-luma logic.
+  It turned out that simple linear filters on the chroma planes give most of the gains from CfL.</p>
 
   <p>The edges are filtered from 2x2 inputs and the interior blocks from 3x3 inputs.
   The weights were trained on the <a href="http://r0k.us/graphics/kodak/">Kodak Lossless True Color Image Suite</a>.</p>
@@ -54,7 +54,7 @@
   `y_C = m + h_C H + v_C V + d_C D`
   </p>
 
-  <p>If the resulting prediction is well correlated with luma, it is used to estimate the gain and sign for CfL.</p>
+  <p>If the resulting prediction can be correlated with luma, it is used to compute the scale parameter for CfL.</p>
 
   <p style="text-align:center">
   `h_L = H*x_L , v_L = V*x_L , d_L = D*x_L`
@@ -68,11 +68,7 @@
   `y_L = m + alpha (h_L H + v_L V + d_L D)`
   </p>
 
-  <p>We may decide whether to use the CfL prediction by the square of the correlation coefficient.</p>
-
-  <p style="text-align:center">
-  `((h_C, v_C, d_C) * (h_L, v_L, d_L))^2 / ((h_C, v_C, d_C)^2 (h_L, v_L, d_L)^2) > 1/4`
-  </p>
+  <p>We use the CfL prediction whenever it is available, as it is at least as accurate for 80% of blocks.</p>
 
   <p>The canvas is drawn from the three planar images below.
   Try moving the sliders to alter to each plane separately.
