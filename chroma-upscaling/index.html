@@ -68,7 +68,14 @@
   `y_L = m + alpha (h_L H + v_L V + d_L D)`
   </p>
 
-  <p>We use the CfL prediction whenever it is available, as it is at least as accurate for 80% of blocks.</p>
+  <p>We use the CfL prediction whenever it is available, as it is at least as accurate for 80% of blocks.
+  On the Kodak set, the result is exact for 57% of pixels and within a rounding error for 90%;
+  the expected absolute error per pixel is 0.65, and the maximum is 45. A typical residual would be:
+  </p>
+
+  <p style="text-align:center">
+  `[[0,1],[-2,0]]`
+  </p>
 
   <p>The canvas is drawn from the three planar images below.
   Try moving the sliders to alter to each plane separately.
