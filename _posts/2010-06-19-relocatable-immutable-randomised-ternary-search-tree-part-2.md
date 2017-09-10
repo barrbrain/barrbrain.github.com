@@ -19,7 +19,8 @@ By Jon Bentley and Bob Sedgewick, April 01, 1998
 
 [Fast algorithms for sorting and searching strings](http://www.cs.princeton.edu/~rs/strings/paper.pdf)
 
-pre. @inproceedings{314321,
+<pre>
+@inproceedings{314321,
 author = "Bentley, Jon L. and Sedgewick, Robert",
 title = "Fast algorithms for sorting and searching strings",
 year = "1997",
@@ -30,6 +31,7 @@ location = "New Orleans, Louisiana, United States",
 pages = "360--369",
 publisher = "Society for Industrial and Applied Mathematics",
 }
+</pre>
 
 Raimund G. Seidel and Cecilia R. Aragon, Randomized Search Trees, Algorithmica, 16(4/5):464-497 (1996).
 Also in 30th Annual Symposium on Foundations of Computer Science, pages 540-545, Research Triangle Park, North Carolina, 30 October-1 November 1989. IEEE.
