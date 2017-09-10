@@ -9,25 +9,26 @@ Add, remove and replace operations can be represented by a single operation, del
 
 I believe that storing the keys in a trie, of which there are many implementations, will require memory bounded by a constant multiple of the entropy of the key set. From Bentley's paper it appears that a ternary search tree is a fast and efficient trie representation. I propose that when coupled with an immutable tree operations that the memory required for each change set will also be bounded by a constant multiple of the entropy of its key set.
 
-h2. Related reading
+Related reading
+---------------
 
-"Purely functional data structures":http://www.cs.cmu.edu/~rwh/theses/okasaki.pdf by Chris Okasaki, Cambridge University Press, 1998, ISBN 0-521-66350-4.
+[Purely functional data structures](http://www.cs.cmu.edu/~rwh/theses/okasaki.pdf) by Chris Okasaki, Cambridge University Press, 1998, ISBN 0-521-66350-4.
 
-"Ternary Search Trees":http://www.drdobbs.com/windows/184410528
+[Ternary Search Trees](http://www.drdobbs.com/windows/184410528)
 By Jon Bentley and Bob Sedgewick, April 01, 1998
 
-"Fast algorithms for sorting and searching strings":http://www.cs.princeton.edu/~rs/strings/paper.pdf
+[Fast algorithms for sorting and searching strings](http://www.cs.princeton.edu/~rs/strings/paper.pdf)
 
 pre. @inproceedings{314321,
-	author    	= "Bentley, Jon L. and Sedgewick, Robert",
-	title    	= "Fast algorithms for sorting and searching strings",
-	year    	= "1997",
-	address    	= "Philadelphia, PA, USA",
-	booktitle    	= "SODA '97: Proceedings of the eighth annual ACM-SIAM symposium on Discrete algorithms",
-	isbn    	= "0-89871-390-0",
-	location    	= "New Orleans, Louisiana, United States",
-	pages    	= "360--369",
-	publisher    	= "Society for Industrial and Applied Mathematics",
+author = "Bentley, Jon L. and Sedgewick, Robert",
+title = "Fast algorithms for sorting and searching strings",
+year = "1997",
+address = "Philadelphia, PA, USA",
+booktitle = "SODA '97: Proceedings of the eighth annual ACM-SIAM symposium on Discrete algorithms",
+isbn = "0-89871-390-0",
+location = "New Orleans, Louisiana, United States",
+pages = "360--369",
+publisher = "Society for Industrial and Applied Mathematics",
 }
 
 Raimund G. Seidel and Cecilia R. Aragon, Randomized Search Trees, Algorithmica, 16(4/5):464-497 (1996).
