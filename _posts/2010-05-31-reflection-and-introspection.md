@@ -46,6 +46,12 @@ that my skills in graphic expression are quite limited.
 
 I close with a random thought that popped into my head the other day:
 
-Grammar geek: So how are the home renovations going? Grammar agnostic: It's not
-quiet there yet. Grammar geek: Don't you mean 'quite'? Grammar agnostic: No.
+Grammar geek: So how are the home renovations going?
+
+Grammar agnostic: It's not quiet there yet.
+
+Grammar geek: Don't you mean 'quite'?
+
+Grammar agnostic: No.
+
 Grammar geek: Oh, right.
