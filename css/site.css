@@ -10,7 +10,7 @@ body {
 }
 
 #post {
-  -webkit-column-width: 65ex;
+  column-width: 65ex;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -49,7 +49,7 @@ ul {
 
 ul li {
   line-height: 1.5em;
-  -webkit-column-break-inside: avoid;
+  break-inside: avoid;
 }
 
 pre {
@@ -59,7 +59,7 @@ pre {
   border: solid black 1px;
   overflow: scroll;
   clear: both;
-  -webkit-column-break-inside: avoid;
+  break-inside: avoid;
 }
 
 /* Tweaks for specific elements */
