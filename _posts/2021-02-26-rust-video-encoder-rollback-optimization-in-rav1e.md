@@ -16,11 +16,11 @@ The Alliance for Open Media is an effort founded by Google, Cisco and Mozilla, w
 
 AV1 has a conventional block transform video coding architecture with motion compensation. A video is a sequence of frames which are divided into one or more tiles. Tiles are divided into large squares called superblocks -- either 64 or 128 pixels in width and height for AV1. Superblocks are partitioned recursively into smaller square or rectangular blocks.
 
-[![AV1 Partitioning](/img/AV1_Partitioning.svg)](https://commons.wikimedia.org/wiki/File:AV1_Partitioning.svg)
+[{% include AV1_Partitioning.svg %}](https://commons.wikimedia.org/wiki/File:AV1_Partitioning.svg)
 
 Each block may be predicted by neighboring blocks in the same tile or by a motion projection of regions in other frames. There are many modes to choose from for both of these cases. The core of the video encoder is deciding how to partition the blocks, which prediction mode and reference to use for each block and how to transform the difference. The following diagram illustrates the range of techniques available in AV1.
 
-[![The technology inside AV1](/img/The_Technology_Inside_Av1.svg)](https://commons.wikimedia.org/wiki/File:The_Technology_Inside_Av1.svg)
+[{% include The_Technology_Inside_Av1.svg %}](https://commons.wikimedia.org/wiki/File:The_Technology_Inside_Av1.svg)
 
 
 ## Rate-distortion optimization (RDO)
@@ -84,7 +84,7 @@ We had a strong indication that the checkpoint and rollback of `BlockContext` an
 
 There is a harness in rav1e to track the CDF updates via the `desync_finder` feature. [The same harness was modified](https://github.com/rust-av/rav1e/commit/6165e4b457afc991275d1d7af0b131db61721c76) to extract fine-grained statistics on CDF access.
 
-[![Rollback sizes histogram](/img/rollback_sizes.svg)](/img/rollback_sizes.svg)
+[{% include rollback_sizes.svg %}](/img/rollback_sizes.svg)
 
 The largest amount of rollbacks impact only a small subset of `CDFContext`.
 
@@ -102,7 +102,7 @@ Work began immediately on investigating what changes would be necessary to suppo
 
 There were 22 patches merged from the initial CDF log implementation to extracting the last percent of speed-up. The impact varied between encoding speed presets. The largest impact was at speed 1, achieving a speed-up of 1.32 times with a single tile on a single thread for 10 frames of 1080p. The following sections describe each change topic and the effect on encoding speed and data structure sizes.
 
-[![Speed up at speed 1, single tile and thread](/img/speedup_progression.svg)](/img/speedup_progression.svg)
+[{% include speedup_progression.svg%}](/img/speedup_progression.svg)
 
 ### A safe start
 
