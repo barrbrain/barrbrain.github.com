@@ -90,7 +90,7 @@ The largest amount of rollbacks impact only a small subset of `CDFContext`.
 
 ## Not our first rodeo: reusing a design
 
-A major event in opensource video coding was the development and release of the [Theora](https://www.theora.org/) format from 2001 to 2004. Work to enhance the reference encoder continued through to 2009. This included pschovisual optimization, adaptive quantization, rate control and encoder speed-ups. This effort was succeeded by the [Daala](https://xiph.org/daala/) project which ultimately became one of the seeds of AV1. Theora, Daala and rav1e share a home at [Xiph.Org](https://www.xiph.org/), with the core contributors also active in rav1e.
+A major event in opensource video coding was the development and release of the [Theora](https://www.theora.org/) format from 2001 to 2004. Work to enhance the reference encoder continued through to 2009. This included psychovisual optimization, adaptive quantization, rate control and encoder speed-ups. This effort was succeeded by the [Daala](https://xiph.org/daala/) project which ultimately became one of the seeds of AV1. Theora, Daala and rav1e share a home at [Xiph.Org](https://www.xiph.org/), with the core contributors also active in rav1e.
 
 The issue of excessive memory copying was raised at a rav1e weekly meeting and it was noted that a similar, smaller problem had been solved in Theora. We had a robust discussion about adapting that design to rav1e and the likely drawbacks of alternative approaches.
 
