@@ -120,6 +120,12 @@ ul span:after {
   }
 }
 
+@supports (content-visibility: hidden) {
+  .title::after {
+    background-image: url(/img/barrbrain-2020.avif);
+  }
+}
+
 blockquote.twitter-tweet {
   margin-left: 0px;
   border-radius: 5px;
