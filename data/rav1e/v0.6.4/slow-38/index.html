@@ -4421,22 +4421,23 @@
       }
     ]
   },
+  "transform": [{"calculate": "91.2/datum.time", "as": "speedup"}],
   "mark": {
     "type": "errorband",
     "extent": "min-max",
     "size": 5
   },
-  "width": 1400,
-  "height": 500,
+  "width": 1000,
+  "height": 580,
   "encoding": {
     "y": {
-      "field": "time",
+      "field": "speedup",
       "type": "quantitative",
       "scale": {
-        "domain": [83, 94]
+        "domain": [0.98, 1.10]
       },
       "axis": {
-        "title": "Time"
+        "title": "Speed-up"
       }
     },
     "x": {
