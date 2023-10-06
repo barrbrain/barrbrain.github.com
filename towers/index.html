@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Towers</title>
+</head>
+<body>
+<canvas id="canvas" width="200" height="200"></canvas>
+<script>
+
+const SCALE = 5;
+const canvas = document.getElementById("canvas");
+const WIDTH = canvas.width;
+const HEIGHT = canvas.height;
+const pixels = new Uint8ClampedArray(WIDTH * HEIGHT * 4);
+const ctx = canvas.getContext("2d");
+canvas.width = WIDTH * SCALE;
+canvas.height = HEIGHT * SCALE;
+ctx.scale(SCALE, SCALE);
+ctx.imageSmoothingEnabled = false;
+const drawScaledPixels = () => {
+  ctx.putImageData(new ImageData(pixels, WIDTH, HEIGHT), 0, 0);
+  ctx.drawImage(ctx.canvas, 0, 0);
+};
+
+const towers = [];
+const count = [];
+let users = 0;
+
+for (let y = 0; y < HEIGHT; y++) {
+  for (let x = 0; x < WIDTH; x++) {
+    const i = (y * WIDTH + x) * 4;
+    const user = Math.random() < 0.5;
+    const tower = Math.random() * WIDTH < 1;
+    if (tower) {
+      pixels[i] = 255;
+      pixels[i + 1] = 1;
+      pixels[i + 2] = 0;
+    } else if (user) {
+      pixels[i] = 255 - x;
+      pixels[i + 1] = 127;
+      pixels[i + 2] = 255 - y;
+    }
+    pixels[i + 3] = 255;
+    if (tower) {
+      towers.push([x, y]);
+      count.push(0);
+    } else if (user) {
+      users++;
+    }
+  }
+}
+
+const LIMIT = Math.ceil(users / towers.length) | 0;
+console.log({ users: users, towers: towers.length, limit: LIMIT });
+
+const isUser = (x, y) => pixels[(y * WIDTH + x) * 4 + 1] == 127;
+const isTower = (x, y) => pixels[(y * WIDTH + x) * 4 + 1] == 1;
+const isAssigned = (x, y) => pixels[(y * WIDTH + x) * 4 + 1] == 255;
+const manhattan = (x0, y0, x1, y1) => Math.abs(x0 - x1) + Math.abs(y0 - y1);
+
+const visitedBits = new Uint32Array((WIDTH * HEIGHT >> 5) + 1);
+const visited = (x, y) => {
+  const i = y * WIDTH + x;
+  const mask = 1 << (i & 31);
+  const v = visitedBits[i >> 5];
+  visitedBits[i >> 5] = v | mask;
+  return (v & mask) !== 0;
+};
+
+const getTower = (x, y) => {
+  const i = (y * WIDTH + x) * 4;
+  const tx = 255 - pixels[i];
+  const ty = 255 - pixels[i + 2];
+  return [tx, ty];
+};
+
+const setTower = (x, y, tx, ty) => {
+  const i = (y * WIDTH + x) * 4;
+  pixels[i] = 255 - tx;
+  pixels[i + 1] = 255;
+  pixels[i + 2] = 255 - ty;
+};
+
+const assignments = [];
+const defined = (a) => a !== undefined;
+
+const pushAssignment = (x, y, d) => {
+  if (d == 1) return;
+  if (assignments[d] == undefined) {
+    assignments[d] = [];
+  }
+  assignments[d].push([x, y]);
+};
+
+const deleteAssignment = (x, y, d) => {
+  const a = assignments[d];
+  if (a === undefined) return;
+  const i = a.findLastIndex(([x0, y0]) => x0 == x && y0 == y);
+  a.splice(i, 1);
+  if (a.length == 0) {
+    delete assignments[d];
+  }
+};
+
+const popAssignment = () => {
+  const i = assignments.findLastIndex(defined);
+  const v = assignments[i].pop();
+  if (assignments[i].length == 0) delete assignments[i];
+  return v;
+};
+
+const assignTower = (x, y, t) => {
+  if (count[t] == LIMIT) return;
+  const [tx, ty] = towers[t];
+  setTower(x, y, tx, ty);
+  count[t]++;
+  pushAssignment(x, y, manhattan(x, y, tx, ty));
+  users--;
+};
+
+function* iterManhattan(x0, y0, D) {
+  for (let d = 0; d <= D; d++) {
+    if (x0 + d < WIDTH) {
+      if (y0 + D - d < HEIGHT) yield [x0 + d, y0 + D - d];
+      if (y0 >= D - d) yield [x0 + d, y0 - D + d];
+    }
+    if (x0 >= d) {
+      if (y0 + D - d < HEIGHT) yield [x0 - d, y0 + D - d];
+      if (y0 >= D - d) yield [x0 - d, y0 - D + d];
+    }
+  }
+}
+
+let distance = 0;
+let frontier = []
+const step = () => {
+  let D = distance++;
+  if (D == 0) {
+    for (let t = 0; t < towers.length; t++) {
+        let [x, y] = towers[t];
+        frontier.push([x, y]);
+        visited(x, y);
+    }
+    return;
+  }
+  let previous = frontier;
+  frontier = [];
+  for (const [x0, y0] of previous) {
+    for (const [x, y] of iterManhattan(x0, y0, 1)) {
+      if (visited(x, y)) continue;
+      frontier.push([x, y]);
+      if (!isUser(x, y)) continue;
+      let best = [WIDTH + HEIGHT, -1];
+      for (let t = 0; t < towers.length; t++) {
+        if (count[t] == LIMIT) continue;
+        let [tx, ty] = towers[t];
+        let d = manhattan(x, y, tx, ty);
+        if (d < best[0]) {
+          best = [d, t];
+        }
+      }
+      assignTower(x, y, best[1]);
+    }
+  }
+};
+
+const evaluateSwap = (x0, y0, x1, y1) => {
+  const [tx0, ty0] = getTower(x0, y0);
+  const [tx1, ty1] = getTower(x1, y1);
+  return (
+    manhattan(x0, y0, tx0, ty0) +
+    manhattan(x1, y1, tx1, ty1) -
+    manhattan(x0, y0, tx1, ty1) -
+    manhattan(x1, y1, tx0, ty0)
+  );
+};
+
+const iterate = () => {
+  const [x0, y0] = popAssignment();
+  const [tx0, ty0] = getTower(x0, y0);
+  const D = manhattan(x0, y0, tx0, ty0);
+  let ext = 0;
+  for (let d = 1; d <= D + ext && d < WIDTH + HEIGHT; d++) {
+    for (const [x1, y1] of iterManhattan(x0, y0, d)) {
+      if (isAssigned(x1, y1)) {
+        let delta = evaluateSwap(x0, y0, x1, y1);
+        if (delta > 0) {
+          const [tx1, ty1] = getTower(x1, y1);
+          deleteAssignment(x1, y1, manhattan(x1, y1, tx1, ty1));
+          setTower(x0, y0, tx1, ty1);
+          setTower(x1, y1, tx0, ty0);
+          pushAssignment(x0, y0, manhattan(x0, y0, tx1, ty1));
+          pushAssignment(x1, y1, manhattan(x1, y1, tx0, ty0));
+          return;
+        }
+      } else if (d <= D && isTower(x1, y1)) {
+        ext = d;
+      }
+    }
+  }
+};
+
+const scan = () => {
+  const D = distance--;
+  for (let n = 0; n < WIDTH * HEIGHT; n++) {
+    let x0 = n % WIDTH;
+    let y0 = n / WIDTH | 0;
+    if (!isAssigned(x0, y0)) continue;
+    for (const [x1, y1] of iterManhattan(x0, y0, D)) {
+      if (!isAssigned(x1, y1)) continue;
+      let delta = evaluateSwap(x0, y0, x1, y1);
+      if (delta > 0) {
+        const [tx0, ty0] = getTower(x0, y0);
+        const [tx1, ty1] = getTower(x1, y1);
+        setTower(x0, y0, tx1, ty1);
+        setTower(x1, y1, tx0, ty0);
+      }
+    }
+  }
+}
+
+const renderScan = () => {
+  scan();
+  drawScaledPixels();
+  if (distance > 0) {
+    requestAnimationFrame(renderScan);
+  } else {
+    console.log("done");
+  }
+};
+
+const renderIteration = () => {
+  const D = assignments.findLastIndex(defined);
+  while (assignments.findLastIndex(defined) >= D) {
+    iterate();
+  }
+  drawScaledPixels();
+  if (assignments.some(defined)) {
+    requestAnimationFrame(renderIteration);
+  } else {
+    requestAnimationFrame(renderScan);
+  }
+};
+
+const renderStep = () => {
+  step();
+  drawScaledPixels();
+  if (users > 0) {
+    requestAnimationFrame(renderStep);
+  } else {
+    requestAnimationFrame(renderIteration);
+  }
+};
+
+renderStep();
+
+</script>
+</body>
+</html>
