@@ -132,7 +132,7 @@ const assignments = [];
 const defined = (a) => a !== undefined && !a.empty;
 
 const pushAssignment = (x, y, d) => {
-  if (d == 1) return;
+  if (d < distance) return;
   if (assignments[d] == undefined) {
     assignments[d] = new IntSet(WIDTH * HEIGHT);
   }
@@ -282,7 +282,7 @@ const renderIteration = () => {
     iterate();
   }
   drawScaledPixels();
-  if (assignments.some(defined)) {
+  if (D >= distance && assignments.some(defined)) {
     requestAnimationFrame(renderIteration);
   } else {
     requestAnimationFrame(renderScan);
