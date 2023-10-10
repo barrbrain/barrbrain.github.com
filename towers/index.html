@@ -59,14 +59,60 @@ const isTower = (x, y) => pixels[(y * WIDTH + x) * 4 + 1] == 1;
 const isAssigned = (x, y) => pixels[(y * WIDTH + x) * 4 + 1] == 255;
 const manhattan = (x0, y0, x1, y1) => Math.abs(x0 - x1) + Math.abs(y0 - y1);
 
-const visitedBits = new Uint32Array((WIDTH * HEIGHT >> 5) + 1);
-const visited = (x, y) => {
-  const i = y * WIDTH + x;
-  const mask = 1 << (i & 31);
-  const v = visitedBits[i >> 5];
-  visitedBits[i >> 5] = v | mask;
-  return (v & mask) !== 0;
-};
+class IntSet {
+  #raw;
+  #length;
+  #min;
+
+  constructor(length) {
+    this.#length = length;
+    this.#raw = new Uint32Array((length >> 5) + 1);
+    this.#min = this.#raw.length;
+  }
+
+  get empty() {
+    return this.#min === this.#raw.length;
+  }
+
+  *[Symbol.iterator] () {
+    const length = this.#raw.length;
+    for (let n = this.#min; n < length; n++) {
+      let i = n << 5;
+      let v = this.#raw[n];
+      for (let m = 1; v & -m; m <<= 1) {
+        if (v & m) yield i;
+        i++;
+      }
+    }
+  }
+
+  and(i) {
+    if (i >= this.#length) return false;
+    return (this.#raw[i >> 5] & (1 << (i & 31))) !== 0;
+  }
+
+  xor(i) {
+    if (i >= this.#length) return;
+    const m = 1 << (i & 31);
+    let n = i >> 5;
+    this.#raw[n] ^= m;
+    if (this.#raw[n] & m) {
+      if (n < this.#min) this.#min = n;
+    } else {
+      if (n == this.#min) {
+        const length = this.#raw.length;
+        while (n < length && this.#raw[n] === 0) n++;
+        this.#min = n;
+      }
+    }
+  }
+
+  cas(i) {
+    const v = this.and(i);
+    if (!v) this.xor(i);
+    return v;
+  }
+}
 
 const getTower = (x, y) => {
   const i = (y * WIDTH + x) * 4;
@@ -83,31 +129,31 @@ const setTower = (x, y, tx, ty) => {
 };
 
 const assignments = [];
-const defined = (a) => a !== undefined;
+const defined = (a) => a !== undefined && !a.empty;
 
 const pushAssignment = (x, y, d) => {
   if (d == 1) return;
   if (assignments[d] == undefined) {
-    assignments[d] = [];
+    assignments[d] = new IntSet(WIDTH * HEIGHT);
   }
-  assignments[d].push([x, y]);
+  assignments[d].xor(x + WIDTH * y);
 };
 
 const deleteAssignment = (x, y, d) => {
   const a = assignments[d];
   if (a === undefined) return;
-  const i = a.findLastIndex(([x0, y0]) => x0 == x && y0 == y);
-  a.splice(i, 1);
-  if (a.length == 0) {
-    delete assignments[d];
-  }
+  a.xor(x + WIDTH * y);
 };
 
 const popAssignment = () => {
   const i = assignments.findLastIndex(defined);
-  const v = assignments[i].pop();
-  if (assignments[i].length == 0) delete assignments[i];
-  return v;
+  let v = -1;
+  for (n of assignments[i]) {
+    v = n;
+    assignments[i].xor(n);
+    break;
+  }
+  return [v % WIDTH, v / WIDTH | 0, i];
 };
 
 const assignTower = (x, y, t) => {
@@ -133,14 +179,15 @@ function* iterManhattan(x0, y0, D) {
 }
 
 let distance = 0;
-let frontier = []
+const visited = new IntSet(WIDTH * HEIGHT);
+let frontier = [];
 const step = () => {
   let D = distance++;
   if (D == 0) {
     for (let t = 0; t < towers.length; t++) {
         let [x, y] = towers[t];
         frontier.push([x, y]);
-        visited(x, y);
+        visited.xor(x + WIDTH * y);
     }
     return;
   }
@@ -148,7 +195,7 @@ const step = () => {
   frontier = [];
   for (const [x0, y0] of previous) {
     for (const [x, y] of iterManhattan(x0, y0, 1)) {
-      if (visited(x, y)) continue;
+      if (visited.cas(x + WIDTH * y)) continue;
       frontier.push([x, y]);
       if (!isUser(x, y)) continue;
       let best = [WIDTH + HEIGHT, -1];
@@ -177,9 +224,8 @@ const evaluateSwap = (x0, y0, x1, y1) => {
 };
 
 const iterate = () => {
-  const [x0, y0] = popAssignment();
+  const [x0, y0, D] = popAssignment();
   const [tx0, ty0] = getTower(x0, y0);
-  const D = manhattan(x0, y0, tx0, ty0);
   let ext = 0;
   for (let d = 1; d <= D + ext && d < WIDTH + HEIGHT; d++) {
     for (const [x1, y1] of iterManhattan(x0, y0, d)) {
