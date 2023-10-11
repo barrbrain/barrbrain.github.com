@@ -160,29 +160,30 @@ const setTower = (x, y, tx, ty) => {
 const assignments = [];
 const defined = (a) => a !== undefined && !a.empty;
 
-const pushAssignment = (x, y, d) => {
+const pushAssignment = (i, d) => {
   if (d < distance) return;
   if (assignments[d] == undefined) {
-    assignments[d] = new IntSet(WIDTH * HEIGHT);
+    assignments[d] = new IntSet(users);
   }
-  assignments[d].xor(x + WIDTH * y);
+  assignments[d].xor(i);
 };
 
-const deleteAssignment = (x, y, d) => {
+const deleteAssignment = (i, d) => {
   const a = assignments[d];
   if (a === undefined) return;
-  a.xor(x + WIDTH * y);
+  a.xor(i);
 };
 
 const popAssignment = () => {
   const i = assignments.findLastIndex(defined);
   let v = -1;
-  for (n of assignments[i]) {
+  for (const n of assignments[i]) {
     v = n;
     assignments[i].xor(n);
     break;
   }
-  return [v % WIDTH, v / WIDTH | 0, i];
+  const n = userIndex[v];
+  return [n % WIDTH, n / WIDTH | 0, v, i];
 };
 
 const assignTower = (x, y, t) => {
@@ -190,8 +191,8 @@ const assignTower = (x, y, t) => {
   const [tx, ty] = towers[t];
   setTower(x, y, tx, ty);
   count[t]++;
-  pushAssignment(x, y, manhattan(x, y, tx, ty));
-  users--;
+  const i = userLabel[x + WIDTH * y];
+  pushAssignment(i, manhattan(x, y, tx, ty));
 };
 
 function* iterManhattan(x0, y0, D) {
@@ -238,7 +239,7 @@ const evaluateSwap = (x0, y0, x1, y1) => {
 };
 
 const iterate = () => {
-  const [x0, y0, D] = popAssignment();
+  const [x0, y0, i0, D] = popAssignment();
   const [tx0, ty0] = getTower(x0, y0);
   let ext = 0;
   for (let d = 1; d <= D + ext && d < WIDTH + HEIGHT; d++) {
@@ -246,12 +247,13 @@ const iterate = () => {
       if (isAssigned(x1, y1)) {
         let delta = evaluateSwap(x0, y0, x1, y1);
         if (delta > 0) {
+	  const i1 = userLabel[x1 + WIDTH * y1];
           const [tx1, ty1] = getTower(x1, y1);
-          deleteAssignment(x1, y1, manhattan(x1, y1, tx1, ty1));
+          deleteAssignment(i1, manhattan(x1, y1, tx1, ty1));
           setTower(x0, y0, tx1, ty1);
           setTower(x1, y1, tx0, ty0);
-          pushAssignment(x0, y0, manhattan(x0, y0, tx1, ty1));
-          pushAssignment(x1, y1, manhattan(x1, y1, tx0, ty0));
+          pushAssignment(i0, manhattan(x0, y0, tx1, ty1));
+          pushAssignment(i1, manhattan(x1, y1, tx0, ty0));
           return;
         }
       } else if (d <= D && isTower(x1, y1)) {
@@ -304,11 +306,7 @@ const renderIteration = () => {
 const renderStep = () => {
   step();
   drawScaledPixels();
-  if (users > 0) {
-    requestAnimationFrame(renderStep);
-  } else {
-    requestAnimationFrame(renderIteration);
-  }
+  requestAnimationFrame(renderIteration);
 };
 
 renderStep();
