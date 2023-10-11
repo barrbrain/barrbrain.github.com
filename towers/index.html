@@ -114,6 +114,35 @@ class IntSet {
   }
 }
 
+let distance = 0;
+const visited = new IntSet(WIDTH * HEIGHT);
+const userLabel = new Uint16Array(WIDTH * HEIGHT);
+const userIndex = new Uint16Array(users);
+
+const labelUsers = () => {
+  let label = 0;
+  let frontier = [];
+  for (let t = 0; t < towers.length; t++) {
+      let [x, y] = towers[t];
+      frontier.push([x, y]);
+      visited.xor(x + WIDTH * y);
+  }
+  while (frontier.length > 0) {
+    distance++;
+    let previous = frontier;
+    frontier = [];
+    for (const [x0, y0] of previous) {
+      for (const [x, y] of iterManhattan(x0, y0, 1)) {
+        if (visited.cas(x + WIDTH * y)) continue;
+        frontier.push([x, y]);
+        if (!isUser(x, y)) continue;
+        userLabel[x + WIDTH * y] = label;
+        userIndex[label++] = x + WIDTH * y;
+      }
+    }
+  }
+};
+
 const getTower = (x, y) => {
   const i = (y * WIDTH + x) * 4;
   const tx = 255 - pixels[i];
@@ -178,37 +207,22 @@ function* iterManhattan(x0, y0, D) {
   }
 }
 
-let distance = 0;
-const visited = new IntSet(WIDTH * HEIGHT);
-let frontier = [];
 const step = () => {
-  let D = distance++;
-  if (D == 0) {
-    for (let t = 0; t < towers.length; t++) {
-        let [x, y] = towers[t];
-        frontier.push([x, y]);
-        visited.xor(x + WIDTH * y);
-    }
-    return;
+  if (distance == 0) {
+    labelUsers();
   }
-  let previous = frontier;
-  frontier = [];
-  for (const [x0, y0] of previous) {
-    for (const [x, y] of iterManhattan(x0, y0, 1)) {
-      if (visited.cas(x + WIDTH * y)) continue;
-      frontier.push([x, y]);
-      if (!isUser(x, y)) continue;
-      let best = [WIDTH + HEIGHT, -1];
-      for (let t = 0; t < towers.length; t++) {
-        if (count[t] == LIMIT) continue;
-        let [tx, ty] = towers[t];
-        let d = manhattan(x, y, tx, ty);
-        if (d < best[0]) {
-          best = [d, t];
-        }
+  for (const xy of userIndex) {
+    let [x, y] = [xy % WIDTH, xy / WIDTH | 0];
+    let best = [WIDTH + HEIGHT, -1];
+    for (let t = 0; t < towers.length; t++) {
+      if (count[t] == LIMIT) continue;
+      let [tx, ty] = towers[t];
+      let d = manhattan(x, y, tx, ty);
+      if (d < best[0]) {
+        best = [d, t];
       }
-      assignTower(x, y, best[1]);
     }
+    assignTower(x, y, best[1]);
   }
 };
 
@@ -249,10 +263,8 @@ const iterate = () => {
 
 const scan = () => {
   const D = distance--;
-  for (let n = 0; n < WIDTH * HEIGHT; n++) {
-    let x0 = n % WIDTH;
-    let y0 = n / WIDTH | 0;
-    if (!isAssigned(x0, y0)) continue;
+  for (const xy0 of userIndex) {
+    let [x0, y0] = [xy0 % WIDTH, xy0 / WIDTH | 0];
     for (const [x1, y1] of iterManhattan(x0, y0, D)) {
       if (!isAssigned(x1, y1)) continue;
       let delta = evaluateSwap(x0, y0, x1, y1);
