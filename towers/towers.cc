@@ -119,14 +119,14 @@ static const uint8_t LIMIT = 100;
 
 class Towers {
 private:
-  uint32_t length;
   uint8_t x[TOWERS], y[TOWERS], c[TOWERS];
-  uint8_t limit;
+  const uint8_t limit;
   uint16_t *bfs, *bfs_end;
   uint16_t bfs_depth;
   IntSet visited;
 
 public:
+  const uint32_t length;
   static uint32_t const raw_length(uint32_t area) {
     return ((area + 1) >> 1) + IntSet::raw_length(area);
   }
@@ -168,12 +168,25 @@ public:
   const uint16_t *const begin() { return (const uint16_t *)(bfs + length); }
   const uint16_t *const end() { return (const uint16_t *)(bfs_end); }
   uint16_t const depth() { return bfs_depth; }
+  bool const can(uint8_t t) { return c[t] < limit; }
   bool const is(uint8_t x, uint8_t y) {
     for (uint32_t n = 0; n < length; n++) {
       if (this->x[n] == x && this->y[n] == y)
         return true;
     }
     return false;
+  }
+  uint16_t const manhattan(uint8_t t, uint8_t x, uint8_t y) {
+    int32_t dx = this->x[t];
+    int32_t dy = this->y[t];
+    dx -= x;
+    dy -= y;
+    return (dx < 0 ? -dx : dx) + (dy < 0 ? -dy : dy);
+  }
+
+  void assign(uint32_t t) {
+    if (c[t] < limit)
+      c[t]++;
   }
 };
 
@@ -207,9 +220,23 @@ public:
       if (exists & *i) {
         x[n] = *i % width;
         y[n] = *i / width;
-        this->t[n] = 0;
         this->n[*i] = n++;
       }
+    }
+    for (n = 0; n < length; n++) {
+      uint16_t best_d = 0xffff;
+      uint32_t tower = 0;
+      for (uint32_t i = 0; i < t.length; i++) {
+        if (!t.can(i))
+          continue;
+        uint16_t d = t.manhattan(i, x[n], y[n]);
+        if (d < best_d) {
+          best_d = d;
+          tower = i;
+        }
+      }
+      this->t[n] = tower;
+      t.assign(tower);
     }
   }
 
