@@ -224,13 +224,13 @@ public:
 };
 
 int main() {
-  uint32_t width = WIDTH / 2;
-  uint32_t height = HEIGHT / 2;
+  uint32_t width = 10;
+  uint32_t height = 10;
   uint32_t area = width * height;
-  uint32_t users = USERS / 2;
+  uint32_t users = 25;
   uint32_t *buf =
       (uint32_t *)calloc(Towers::raw_length(area) + Users::raw_length(area), 4);
-  Towers t(buf, TOWERS / 2, LIMIT / 2, width, height);
+  Towers t(buf, height, 3, width, height);
   Users u(&buf[Towers::raw_length(area)], users, width, height, t);
   for (uint8_t y = 0; y < height; y++) {
     for (uint8_t x = 0; x < width; x++) {
