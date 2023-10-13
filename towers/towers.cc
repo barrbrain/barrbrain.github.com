@@ -117,37 +117,49 @@ static const uint8_t LIMIT = 100;
 
 #include <cstdlib>
 
+class LUT {
+public:
+  uint8_t *const x, *const y, *const v;
+  uint16_t *const begin, *const end;
+  static uint32_t const raw_length(uint32_t length, uint32_t area) {
+    return ((length * 3 + 3) >> 2) + ((area + 1) >> 1);
+  }
+  LUT(uint32_t *r, uint32_t length, uint32_t area)
+      : x((uint8_t *)r), y(x + length), v(y + length),
+        begin((uint16_t *)&r[(length * 3 + 3) >> 2]), end(&begin[area]) {}
+};
+
 class Towers {
 private:
-  uint8_t x[TOWERS], y[TOWERS], c[TOWERS];
-  const uint8_t limit;
-  uint16_t *bfs, *bfs_end;
-  uint16_t bfs_depth;
+  LUT lut;
   IntSet visited;
+  uint16_t bfs_depth;
 
 public:
+  const uint8_t limit;
   const uint32_t length;
-  static uint32_t const raw_length(uint32_t area) {
-    return ((area + 1) >> 1) + IntSet::raw_length(area);
+  static uint32_t const raw_length(uint32_t length, uint32_t area) {
+    return LUT::raw_length(length, area) + IntSet::raw_length(area);
   }
   Towers(uint32_t *r, uint32_t len, uint8_t lim, uint32_t width,
          uint32_t height)
-      : length(len), limit(lim), bfs((uint16_t *)r),
-        bfs_end(&bfs[width * height]), bfs_depth(0),
-        visited(&r[(width * height + 1) >> 1], width * height) {
-    for (uint32_t n = 0; n < length; n++) {
-      x[n] = (rand() >> 8) * width / (RAND_MAX >> 8);
-      y[n] = n;
-      c[n] = 0;
-      uint16_t xy = x[n] + width * y[n];
-      bfs[n] = xy;
-      visited ^= xy;
+      : length(len), limit(lim), lut(r, len, width * height), bfs_depth(0),
+        visited(r + LUT::raw_length(len, width * height), width * height) {
+    for (uint32_t n = 0; n < length;) {
+      lut.x[n] = (rand() >> 8) * width / (RAND_MAX >> 8);
+      lut.y[n] = (rand() >> 8) * height / (RAND_MAX >> 8);
+      uint16_t xy = lut.x[n] + width * lut.y[n];
+      if (visited |= xy)
+        continue;
+      n++;
+      lut.v[n] = 0;
+      lut.begin[n] = xy;
     }
     uint32_t head = length;
     uint32_t prev = head;
     uint32_t area = width * height;
     for (uint32_t n = 0; n < area; n++) {
-      uint16_t xy = bfs[n];
+      uint16_t xy = lut.begin[n];
       uint8_t y = xy / width;
       uint8_t x = xy % width;
       if (n == prev) {
@@ -155,38 +167,40 @@ public:
         bfs_depth++;
       }
       if (y > 0 && !(visited |= (xy - width)))
-        bfs[head++] = xy - width;
+        lut.begin[head++] = xy - width;
       if (x > 0 && !(visited |= (xy - 1)))
-        bfs[head++] = xy - 1;
+        lut.begin[head++] = xy - 1;
       if (x + 1 < width && !(visited |= (xy + 1)))
-        bfs[head++] = xy + 1;
+        lut.begin[head++] = xy + 1;
       if (y + 1 < height && !(visited |= (xy + width)))
-        bfs[head++] = xy + width;
+        lut.begin[head++] = xy + width;
     }
   }
 
-  const uint16_t *const begin() { return (const uint16_t *)(bfs + length); }
-  const uint16_t *const end() { return (const uint16_t *)(bfs_end); }
+  const uint16_t *const begin() {
+    return (const uint16_t *)(lut.begin + length);
+  }
+  const uint16_t *const end() { return (const uint16_t *)(lut.end); }
   uint16_t const depth() { return bfs_depth; }
-  bool const can(uint8_t t) { return c[t] < limit; }
+  bool const can(uint8_t t) { return lut.v[t] < limit; }
   bool const is(uint8_t x, uint8_t y) {
     for (uint32_t n = 0; n < length; n++) {
-      if (this->x[n] == x && this->y[n] == y)
+      if (lut.x[n] == x && lut.y[n] == y)
         return true;
     }
     return false;
   }
   uint16_t const manhattan(uint8_t t, uint8_t x, uint8_t y) {
-    int32_t dx = this->x[t];
-    int32_t dy = this->y[t];
+    int32_t dx = lut.x[t];
+    int32_t dy = lut.y[t];
     dx -= x;
     dy -= y;
     return (dx < 0 ? -dx : dx) + (dy < 0 ? -dy : dy);
   }
 
   void assign(uint32_t t) {
-    if (c[t] < limit)
-      c[t]++;
+    if (lut.v[t] < limit)
+      lut.v[t]++;
   }
 };
 
@@ -195,18 +209,17 @@ using namespace std;
 
 class Users {
 private:
-  uint32_t length;
-  uint8_t t[USERS], x[USERS], y[USERS];
-  uint16_t *n;
+  LUT lut;
   IntSet exists;
 
 public:
-  static uint32_t const raw_length(uint32_t area) {
-    return ((area + 1) >> 1) + IntSet::raw_length(area);
+  const uint32_t length;
+  static uint32_t const raw_length(uint32_t length, uint32_t area) {
+    return LUT::raw_length(length, area) + IntSet::raw_length(area);
   }
   Users(uint32_t *r, uint32_t len, uint32_t width, uint32_t height, Towers &t)
-      : length(len), n((uint16_t *)r),
-        exists(&r[(width * height + 1) >> 1], width * height) {
+      : length(len), lut(r, len, width * height),
+        exists(&r[LUT::raw_length(len, width * height)], width * height) {
     for (uint32_t n = 0; n < length;) {
       uint8_t x = (rand() >> 8) * width / (RAND_MAX >> 8);
       uint8_t y = (rand() >> 8) * height / (RAND_MAX >> 8);
@@ -218,9 +231,9 @@ public:
     uint32_t n = 0;
     for (const uint16_t *i = t.begin(); i < t.end(); i++) {
       if (exists & *i) {
-        x[n] = *i % width;
-        y[n] = *i / width;
-        this->n[*i] = n++;
+        lut.x[n] = *i % width;
+        lut.y[n] = *i / width;
+        lut.begin[*i] = n++;
       }
     }
     for (n = 0; n < length; n++) {
@@ -229,13 +242,13 @@ public:
       for (uint32_t i = 0; i < t.length; i++) {
         if (!t.can(i))
           continue;
-        uint16_t d = t.manhattan(i, x[n], y[n]);
+        uint16_t d = t.manhattan(i, lut.x[n], lut.y[n]);
         if (d < best_d) {
           best_d = d;
           tower = i;
         }
       }
-      this->t[n] = tower;
+      lut.v[n] = tower;
       t.assign(tower);
     }
   }
@@ -244,8 +257,8 @@ public:
 
   void const display() {
     for (uint32_t n = 0; n < length; n++) {
-      cout << (uint32_t)x[n] << "," << (uint32_t)y[n] << ":" << (uint32_t)t[n]
-           << endl;
+      cout << (uint32_t)lut.x[n] << "," << (uint32_t)lut.y[n] << ":"
+           << (uint32_t)lut.v[n] << endl;
     }
   }
 };
@@ -254,11 +267,12 @@ int main() {
   uint32_t width = 10;
   uint32_t height = 10;
   uint32_t area = width * height;
+  uint32_t towers = height;
   uint32_t users = 25;
-  uint32_t *buf =
-      (uint32_t *)calloc(Towers::raw_length(area) + Users::raw_length(area), 4);
-  Towers t(buf, height, 3, width, height);
-  Users u(&buf[Towers::raw_length(area)], users, width, height, t);
+  uint32_t *buf = (uint32_t *)calloc(
+      Towers::raw_length(towers, area) + Users::raw_length(users, area), 4);
+  Towers t(buf, towers, 3, width, height);
+  Users u(&buf[Towers::raw_length(towers, area)], users, width, height, t);
   for (uint8_t y = 0; y < height; y++) {
     for (uint8_t x = 0; x < width; x++) {
       cout << (t.is(x, y) ? "T" : u.is(x + width * y) ? "u" : " ");
