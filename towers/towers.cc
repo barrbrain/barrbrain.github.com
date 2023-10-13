@@ -177,49 +177,69 @@ public:
   }
 };
 
+#include <iostream>
+using namespace std;
+
 class Users {
 private:
   uint32_t length;
   uint8_t t[USERS], x[USERS], y[USERS];
-  uint16_t n[WIDTH * HEIGHT];
+  uint16_t *n;
+  IntSet exists;
 
 public:
-  Users(uint32_t len, uint32_t width, uint32_t height, Towers &t)
-      : length(len) {
+  static uint32_t const raw_length(uint32_t area) {
+    return ((area + 1) >> 1) + IntSet::raw_length(area);
+  }
+  Users(uint32_t *r, uint32_t len, uint32_t width, uint32_t height, Towers &t)
+      : length(len), n((uint16_t *)r),
+        exists(&r[(width * height + 1) >> 1], width * height) {
     for (uint32_t n = 0; n < length;) {
       uint8_t x = (rand() >> 8) * width / (RAND_MAX >> 8);
       uint8_t y = (rand() >> 8) * height / (RAND_MAX >> 8);
       uint32_t i = x + width * y;
-      if (this->n[i] != 0 || t.is(x, y))
+      if (t.is(x, y) || (exists |= i))
         continue;
-      this->n[i] = ++n;
+      n++;
+    }
+    uint32_t n = 0;
+    for (const uint16_t *i = t.begin(); i < t.end(); i++) {
+      if (exists & *i) {
+        x[n] = *i % width;
+        y[n] = *i / width;
+        this->t[n] = 0;
+        this->n[*i] = n++;
+      }
     }
   }
 
-  bool const is(uint8_t x, uint8_t y, uint32_t width) {
-    return n[x + width * y] != 0;
+  bool const is(uint16_t i) { return exists & i; }
+
+  void const display() {
+    for (uint32_t n = 0; n < length; n++) {
+      cout << (uint32_t)x[n] << "," << (uint32_t)y[n] << ":" << (uint32_t)t[n]
+           << endl;
+    }
   }
 };
-
-#include <iostream>
-using namespace std;
 
 int main() {
   uint32_t width = WIDTH / 2;
   uint32_t height = HEIGHT / 2;
-  uint32_t *buf = (uint32_t *)calloc(Towers::raw_length(width * height), 4);
+  uint32_t area = width * height;
+  uint32_t users = USERS / 2;
+  uint32_t *buf =
+      (uint32_t *)calloc(Towers::raw_length(area) + Users::raw_length(area), 4);
   Towers t(buf, TOWERS / 2, LIMIT / 2, width, height);
-  Users u(USERS / 2, width, height, t);
+  Users u(&buf[Towers::raw_length(area)], users, width, height, t);
   for (uint8_t y = 0; y < height; y++) {
     for (uint8_t x = 0; x < width; x++) {
-      cout << (t.is(x, y) ? "T" : u.is(x, y, width) ? "u" : " ");
+      cout << (t.is(x, y) ? "T" : u.is(x + width * y) ? "u" : " ");
     }
     cout << endl;
   }
-  for (const uint16_t *n = t.begin(); n < t.end(); n++) {
-    cout << *n << " ";
-  }
   cout << t.depth() << endl;
+  u.display();
   cout << endl;
   return 0;
 }
