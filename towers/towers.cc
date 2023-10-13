@@ -122,17 +122,52 @@ private:
   uint32_t length;
   uint8_t x[TOWERS], y[TOWERS], c[TOWERS];
   uint8_t limit;
+  uint16_t *bfs, *bfs_end;
+  uint16_t bfs_depth;
+  IntSet visited;
 
 public:
-  Towers(uint32_t len, uint8_t lim, uint32_t width, uint32_t height)
-      : length(len), limit(lim) {
+  static uint32_t const raw_length(uint32_t area) {
+    return ((area + 1) >> 1) + IntSet::raw_length(area);
+  }
+  Towers(uint32_t *r, uint32_t len, uint8_t lim, uint32_t width,
+         uint32_t height)
+      : length(len), limit(lim), bfs((uint16_t *)r),
+        bfs_end(&bfs[width * height]), bfs_depth(0),
+        visited(&r[(width * height + 1) >> 1], width * height) {
     for (uint32_t n = 0; n < length; n++) {
       x[n] = (rand() >> 8) * width / (RAND_MAX >> 8);
       y[n] = n;
       c[n] = 0;
+      uint16_t xy = x[n] + width * y[n];
+      bfs[n] = xy;
+      visited ^= xy;
+    }
+    uint32_t head = length;
+    uint32_t prev = head;
+    uint32_t area = width * height;
+    for (uint32_t n = 0; n < area; n++) {
+      uint16_t xy = bfs[n];
+      uint8_t y = xy / width;
+      uint8_t x = xy % width;
+      if (n == prev) {
+        prev = head;
+        bfs_depth++;
+      }
+      if (y > 0 && !(visited |= (xy - width)))
+        bfs[head++] = xy - width;
+      if (x > 0 && !(visited |= (xy - 1)))
+        bfs[head++] = xy - 1;
+      if (x + 1 < width && !(visited |= (xy + 1)))
+        bfs[head++] = xy + 1;
+      if (y + 1 < height && !(visited |= (xy + width)))
+        bfs[head++] = xy + width;
     }
   }
 
+  const uint16_t *const begin() { return (const uint16_t *)(bfs + length); }
+  const uint16_t *const end() { return (const uint16_t *)(bfs_end); }
+  uint16_t const depth() { return bfs_depth; }
   bool const is(uint8_t x, uint8_t y) {
     for (uint32_t n = 0; n < length; n++) {
       if (this->x[n] == x && this->y[n] == y)
@@ -172,14 +207,19 @@ using namespace std;
 int main() {
   uint32_t width = WIDTH / 2;
   uint32_t height = HEIGHT / 2;
-  Towers t(TOWERS / 2, LIMIT / 2, width, height);
+  uint32_t *buf = (uint32_t *)calloc(Towers::raw_length(width * height), 4);
+  Towers t(buf, TOWERS / 2, LIMIT / 2, width, height);
   Users u(USERS / 2, width, height, t);
-  ;
   for (uint8_t y = 0; y < height; y++) {
     for (uint8_t x = 0; x < width; x++) {
       cout << (t.is(x, y) ? "T" : u.is(x, y, width) ? "u" : " ");
     }
     cout << endl;
   }
+  for (const uint16_t *n = t.begin(); n < t.end(); n++) {
+    cout << *n << " ";
+  }
+  cout << t.depth() << endl;
+  cout << endl;
   return 0;
 }
