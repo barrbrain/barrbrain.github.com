@@ -66,6 +66,9 @@ private:
   uint32_t max;
 
 public:
+  static uint32_t const raw_length(uint32_t length, uint32_t range) {
+    return length * IntSet::raw_length(range);
+  }
   Queue(IntSet *r, uint32_t l, uint32_t *buf, uint32_t range)
       : raw(r), length(l), max(0) {
     uint32_t n = IntSet::raw_length(range);
@@ -212,16 +215,21 @@ class Users {
 private:
   LUT lut;
   IntSet exists;
+  IntSet bucket[WIDTH + HEIGHT - 1];
+  Queue queue;
 
 public:
-  const uint32_t length;
-  static uint32_t const raw_length(uint32_t length, uint32_t area) {
-    return LUT::raw_length(length, area) + IntSet::raw_length(area);
+  const uint32_t length, width, height;
+  static uint32_t const raw_length(uint32_t l, uint32_t w, uint32_t h) {
+    uint32_t a = w * h;
+    return LUT::raw_length(l, a) + IntSet::raw_length(a) +
+           Queue::raw_length(w + h - 1, l);
   }
-  Users(uint32_t *r, uint32_t len, uint32_t width, uint32_t height, Towers &t)
-      : lut(r, len, width * height),
-        exists(&r[LUT::raw_length(len, width * height)], width * height),
-        length(len) {
+  Users(uint32_t *r, uint32_t l, uint32_t w, uint32_t h, Towers &t)
+      : lut(r, l, w * h), exists(&r[LUT::raw_length(l, w * h)], w * h),
+        queue(&bucket[0], w + h - 1,
+              &r[LUT::raw_length(l, w * h) + IntSet::raw_length(w * h)], l),
+        length(l), width(w), height(h) {
     for (uint32_t n = 0; n < length;) {
       uint8_t x = (rand() >> 8) * width / (RAND_MAX >> 8);
       uint8_t y = (rand() >> 8) * height / (RAND_MAX >> 8);
@@ -252,7 +260,27 @@ public:
       }
       lut.v[n] = tower;
       t.assign(tower);
+      if (best_d > t.depth()) {
+        queue[best_d] ^= n;
+      }
     }
+  }
+
+  bool iterate(Towers &t) {
+    if (queue.empty())
+      return false;
+    Queue::Ref ref = queue.next();
+    const uint32_t D = ref.key;
+    const uint32_t i0 = ref.next();
+    ref ^= i0;
+    const uint32_t x0 = lut.x[i0];
+    const uint32_t y0 = lut.y[i0];
+    const uint32_t t0 = lut.v[i0];
+    uint32_t ext = 0;
+    for (uint32_t d = 1; d <= D + ext && d < width + height; d++) {
+      // TODO
+    }
+    return queue.empty();
   }
 
   bool const is(uint16_t i) { return exists & i; }
@@ -271,10 +299,15 @@ int main() {
   uint32_t area = width * height;
   uint32_t towers = height;
   uint32_t users = 25;
-  uint32_t *buf = (uint32_t *)calloc(
-      Towers::raw_length(towers, area) + Users::raw_length(users, area), 4);
+  uint32_t *buf =
+      (uint32_t *)calloc(Towers::raw_length(towers, area) +
+                             Users::raw_length(users, width, height),
+                         4);
   Towers t(buf, towers, 3, width, height);
   Users u(&buf[Towers::raw_length(towers, area)], users, width, height, t);
+  while (u.iterate(t)) {
+    // Perhaps, display stats?
+  }
   for (uint8_t y = 0; y < height; y++) {
     for (uint8_t x = 0; x < width; x++) {
       cout << (t.is(x, y) ? "T" : u.is(x + width * y) ? "u" : " ");
