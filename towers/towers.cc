@@ -92,7 +92,7 @@ public:
 
   public:
     const uint32_t key;
-    Ref(uint32_t k, Queue &t, IntSet &s) : key(k), that(t), set(s) {}
+    Ref(uint32_t k, Queue &t, IntSet &s) : that(t), set(s), key(k) {}
 
     void operator^=(uint32_t v) {
       bool value = (set ^= v);
@@ -136,20 +136,21 @@ private:
   uint16_t bfs_depth;
 
 public:
-  const uint8_t limit;
   const uint32_t length;
+  const uint8_t limit;
   static uint32_t const raw_length(uint32_t length, uint32_t area) {
     return LUT::raw_length(length, area) + IntSet::raw_length(area);
   }
   Towers(uint32_t *r, uint32_t len, uint8_t lim, uint32_t width,
          uint32_t height)
-      : length(len), limit(lim), lut(r, len, width * height), bfs_depth(0),
-        visited(r + LUT::raw_length(len, width * height), width * height) {
+      : lut(r, len, width * height),
+        visited(r + LUT::raw_length(len, width * height), width * height),
+        bfs_depth(0), length(len), limit(lim) {
     for (uint32_t n = 0; n < length;) {
       lut.x[n] = (rand() >> 8) * width / (RAND_MAX >> 8);
       lut.y[n] = (rand() >> 8) * height / (RAND_MAX >> 8);
       uint16_t xy = lut.x[n] + width * lut.y[n];
-      if (visited |= xy)
+      if ((visited |= xy))
         continue;
       n++;
       lut.v[n] = 0;
@@ -160,8 +161,8 @@ public:
     uint32_t area = width * height;
     for (uint32_t n = 0; n < area; n++) {
       uint16_t xy = lut.begin[n];
-      uint8_t y = xy / width;
-      uint8_t x = xy % width;
+      uint32_t y = xy / width;
+      uint32_t x = xy % width;
       if (n == prev) {
         prev = head;
         bfs_depth++;
@@ -218,8 +219,9 @@ public:
     return LUT::raw_length(length, area) + IntSet::raw_length(area);
   }
   Users(uint32_t *r, uint32_t len, uint32_t width, uint32_t height, Towers &t)
-      : length(len), lut(r, len, width * height),
-        exists(&r[LUT::raw_length(len, width * height)], width * height) {
+      : lut(r, len, width * height),
+        exists(&r[LUT::raw_length(len, width * height)], width * height),
+        length(len) {
     for (uint32_t n = 0; n < length;) {
       uint8_t x = (rand() >> 8) * width / (RAND_MAX >> 8);
       uint8_t y = (rand() >> 8) * height / (RAND_MAX >> 8);
